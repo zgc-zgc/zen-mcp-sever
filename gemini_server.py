@@ -174,7 +174,9 @@ def prepare_code_context(
 
     # Add direct code
     if code:
-        formatted_code = f"\n--- BEGIN DIRECT CODE ---\n{code}\n--- END DIRECT CODE ---\n"
+        formatted_code = (
+            f"\n--- BEGIN DIRECT CODE ---\n{code}\n--- END DIRECT CODE ---\n"
+        )
         context_parts.append(formatted_code)
         preview = code[:100] + "..." if len(code) > 100 else code
         summary_parts.append(f"💻 Direct code provided ({len(code):,} characters)")
@@ -341,9 +343,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
         try:
             # Prepare code context - always use non-verbose mode for Claude Code compatibility
-            code_context, summary = prepare_code_context(
-                request.files, request.code
-            )
+            code_context, summary = prepare_code_context(request.files, request.code)
 
             # Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
             estimated_tokens = len(code_context) // 4
@@ -378,7 +378,8 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 {code_context}
 === END CODE TO ANALYZE ===
 
-Please analyze the code above and respond to the user's request. The code files are clearly marked with their paths and content boundaries."""
+Please analyze the code above and respond to the user's request. The code files are clearly \
+marked with their paths and content boundaries."""
 
             # Generate response
             response = model.generate_content(full_prompt)
