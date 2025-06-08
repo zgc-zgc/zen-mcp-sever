@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "gemini": {
-      "command": "/path/to/gemini-mcp-server/venv/bin/python",
-      "args": ["/path/to/gemini-mcp-server/gemini_server.py"],
+      "command": "/path/to/gemini-mcp-server/run_gemini.sh",
       "env": {
         "GEMINI_API_KEY": "your-gemini-api-key-here"
       }

@@ -18,14 +18,25 @@ This server acts as a developer assistant that augments Claude Code when you nee
 Add to your Claude Desktop configuration file:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-
 ```json
 {
   "mcpServers": {
     "gemini": {
-      "command": "/path/to/gemini-mcp-server/venv/bin/python",
-      "args": ["/path/to/gemini-mcp-server/gemini_server.py"],
+      "command": "/path/to/gemini-mcp-server/run_gemini.sh",
+      "env": {
+        "GEMINI_API_KEY": "your-gemini-api-key-here"
+      }
+    }
+  }
+}
+```
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+```json
+{
+  "mcpServers": {
+    "gemini": {
+      "command": "C:\\path\\to\\gemini-mcp-server\\run_gemini.bat",
       "env": {
         "GEMINI_API_KEY": "your-gemini-api-key-here"
       }
