@@ -139,13 +139,15 @@ class TestToolHandlers:
     async def test_handle_list_tools(self):
         """Test listing available tools"""
         tools = await handle_list_tools()
-        assert len(tools) == 4
+        assert len(tools) == 6
 
         tool_names = [tool.name for tool in tools]
         assert "chat" in tool_names
         assert "analyze_code" in tool_names
         assert "list_models" in tool_names
         assert "get_version" in tool_names
+        assert "analyze_file" in tool_names
+        assert "extended_think" in tool_names
 
     @pytest.mark.asyncio
     async def test_handle_call_tool_unknown(self):
@@ -253,6 +255,62 @@ class TestToolHandlers:
         assert len(models) == 1
         assert models[0]["name"] == "test-model"
         assert models[0]["is_default"] == False
+
+    @pytest.mark.asyncio
+    @patch("google.generativeai.GenerativeModel")
+    async def test_handle_call_tool_analyze_file_success(self, mock_model, tmp_path):
+        """Test successful file analysis with analyze_file tool"""
+        # Create test file
+        test_file = tmp_path / "test.py"
+        test_file.write_text("def hello(): pass", encoding="utf-8")
+
+        # Mock response
+        mock_response = Mock()
+        mock_response.candidates = [Mock()]
+        mock_response.candidates[0].content.parts = [Mock(text="File analysis result")]
+
+        mock_instance = Mock()
+        mock_instance.generate_content.return_value = mock_response
+        mock_model.return_value = mock_instance
+
+        result = await handle_call_tool(
+            "analyze_file", {"files": [str(test_file)], "question": "Analyze this file"}
+        )
+
+        assert len(result) == 1
+        response_text = result[0].text
+        assert "Analyzing 1 file(s)" in response_text
+        assert "Gemini's Analysis:" in response_text
+        assert "File analysis result" in response_text
+
+    @pytest.mark.asyncio
+    @patch("google.generativeai.GenerativeModel")
+    async def test_handle_call_tool_extended_think_success(self, mock_model):
+        """Test successful extended thinking"""
+        # Mock response
+        mock_response = Mock()
+        mock_response.candidates = [Mock()]
+        mock_response.candidates[0].content.parts = [
+            Mock(text="Extended thinking result")
+        ]
+
+        mock_instance = Mock()
+        mock_instance.generate_content.return_value = mock_response
+        mock_model.return_value = mock_instance
+
+        result = await handle_call_tool(
+            "extended_think",
+            {
+                "thought_process": "Claude's analysis of the problem...",
+                "context": "Building a distributed system",
+                "focus": "performance",
+            },
+        )
+
+        assert len(result) == 1
+        response_text = result[0].text
+        assert "Extended Analysis by Gemini:" in response_text
+        assert "Extended thinking result" in response_text
 
 
 class TestErrorHandling:

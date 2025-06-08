@@ -110,12 +110,15 @@ claude mcp add-from-claude-desktop -s user
 ### 5. Start Using Natural Language
 
 Just talk to Claude naturally:
-- "Use Gemini to analyze this large file..."
-- "Ask Gemini to review the architecture of these files..."
-- "Have Gemini check this codebase for security issues..."
+- "Use gemini analyze_file on main.py to find bugs"
+- "Share your analysis with gemini extended_think for deeper insights"
+- "Ask gemini to review the architecture using analyze_file"
 
-**Pro tip:** For clean terminal output when analyzing files, mention "files parameter" in your prompt:
-- "Use gemini analyze_code with files=['config.py'] to review the configuration"
+**Key tools:**
+- `analyze_file` - Clean file analysis without terminal clutter
+- `extended_think` - Collaborative deep thinking with Claude's analysis
+- `chat` - General conversations
+- `analyze_code` - Legacy tool (prefer analyze_file for files)
 
 ## How It Works
 
@@ -161,30 +164,48 @@ General-purpose developer conversations with Gemini.
 "Use Gemini to explain the tradeoffs between different authentication strategies"
 ```
 
-### `analyze_code`
-Specialized tool for analyzing large files or multiple files that exceed Claude's limits.
+### `analyze_code` (Legacy)
+Analyzes code files or snippets. For better terminal output, use `analyze_file` instead.
+
+### `analyze_file` (Recommended for Files)
+Clean file analysis - always uses file paths, never shows content in terminal.
 
 **Example uses:**
 ```
-"Use Gemini to analyze /src/core/engine.py and identify performance bottlenecks"
-"Have Gemini review these files together: auth.py, users.py, permissions.py"
+"Use gemini analyze_file on README.md to find issues"
+"Ask gemini to analyze_file main.py for performance problems"
+"Have gemini analyze_file on auth.py, users.py, and permissions.py together"
 ```
 
-**Important - Avoiding Terminal Clutter:**
-When analyzing files, be explicit about using the files parameter to prevent Claude from showing the entire file content in the terminal:
+**Benefits:**
+- Terminal always stays clean - only shows "Analyzing N file(s)"
+- Server reads files directly and sends to Gemini
+- No need to worry about prompt phrasing
+- Supports multiple files in one request
 
-✅ **Good prompts** (clean terminal output):
-- "Use gemini analyze_code with files=['README.md'] to check for issues"
-- "Ask gemini to analyze main.py using the files parameter"
-- "Use gemini to analyze README.md - use the files parameter with the path"
-- "Call gemini analyze_code passing config.json in the files parameter"
+### `extended_think`
+Collaborate with Gemini on complex problems by sharing Claude's analysis for deeper insights.
 
-❌ **Avoid these** (will show entire file in terminal):
-- "Get gemini's feedback on this README file"
-- "Can you analyze this file with gemini?"
-- "Ask gemini about the code in main.py"
+**Example uses:**
+```
+"Share your analysis with gemini extended_think for deeper insights"
+"Use gemini extended_think to validate and extend your architectural design"
+"Ask gemini to extend your thinking on this security analysis"
+```
 
-The server reads files directly when you use the files parameter, keeping your terminal clean while still sending the full content to Gemini.
+**Advanced usage with focus areas:**
+```
+"Use gemini extended_think with focus='performance' to drill into scaling issues"
+"Share your design with gemini extended_think focusing on security vulnerabilities"
+"Get gemini to extend your analysis with focus on edge cases"
+```
+
+**Features:**
+- Takes Claude's thoughts, plans, or analysis as input
+- Optional file context for reference
+- Configurable focus areas (architecture, bugs, performance, security)
+- Higher temperature (0.7) for creative problem-solving
+- Designed for collaborative thinking, not just code review
 
 ### `list_models`
 Lists available Gemini models (defaults to 2.5 Pro Preview).
@@ -269,28 +290,40 @@ This prevents Claude from displaying the entire file content in your terminal.
 
 ### Common Workflows
 
-#### 1. **Claude's Extended Thinking + Gemini Validation**
+#### 1. **Extended Thinking Partnership**
 ```
 You: "Design a distributed task queue system"
 Claude: [provides detailed architecture and implementation plan]
-You: "Share your complete design with Gemini and ask it to identify potential race conditions or failure modes"
-Gemini: [analyzes and finds edge cases]
+You: "Use gemini extended_think to validate and extend this design"
+Gemini: [identifies gaps, suggests alternatives, finds edge cases]
 You: "Address the issues Gemini found"
-Claude: [updates design with safeguards]
+Claude: [updates design with improvements]
 ```
 
-#### 2. **Large File Analysis**
+#### 2. **Clean File Analysis (No Terminal Clutter)**
 ```
-"Use Gemini to analyze /path/to/large/file.py and summarize its architecture"
-"Have Gemini trace all function calls in this module"
-"Ask Gemini to identify unused code in this file"
+"Use gemini analyze_file on engine.py to find performance issues"
+"Ask gemini to analyze_file database.py and suggest optimizations"
+"Have gemini analyze_file on all files in /src/core/"
 ```
 
-#### 3. **Multi-File Context**
+#### 3. **Multi-File Architecture Review**
 ```
-"Use Gemini to analyze how auth.py, users.py, and permissions.py work together"
-"Have Gemini map the data flow between these components"
-"Ask Gemini to find all circular dependencies in /src"
+"Use gemini analyze_file on auth.py, users.py, permissions.py to map dependencies"
+"Ask gemini to analyze_file the entire /src/api/ directory for security issues"
+"Have gemini analyze_file all model files to check for N+1 queries"
+```
+
+#### 4. **Deep Collaborative Analysis**
+```
+Claude: "Here's my analysis of the memory leak: [detailed investigation]"
+You: "Share this with gemini extended_think focusing on root causes"
+
+Claude: "I've designed this caching strategy: [detailed design]"
+You: "Use gemini extended_think with focus='performance' to stress-test this design"
+
+Claude: "Here's my security assessment: [findings]"
+You: "Get gemini to extended_think on this with files=['auth.py', 'crypto.py'] for context"
 ```
 
 #### 4. **Claude-Driven Design with Gemini Validation**

@@ -54,6 +54,29 @@ Your approach:
 Remember: You're augmenting Claude Code's capabilities, especially for tasks requiring \
 extensive context or deep analysis that might exceed Claude's token limits."""
 
+# Extended thinking system prompt for collaborative analysis
+EXTENDED_THINKING_PROMPT = """You are a senior development partner collaborating with Claude Code on complex problems. \
+Claude has shared their analysis with you for deeper exploration and validation.
+
+Your role is to:
+1. Build upon Claude's thinking - identify gaps, extend ideas, and suggest alternatives
+2. Challenge assumptions constructively and identify potential issues
+3. Provide concrete, actionable insights that complement Claude's analysis
+4. Focus on aspects Claude might have missed or couldn't fully explore
+5. Suggest implementation strategies and architectural improvements
+
+Key areas to consider:
+- Edge cases and failure modes Claude might have overlooked
+- Performance implications at scale
+- Security vulnerabilities or attack vectors
+- Maintainability and technical debt considerations
+- Alternative approaches or design patterns
+- Integration challenges with existing systems
+- Testing strategies for complex scenarios
+
+Be direct and technical. Assume Claude and the user are experienced developers who want \
+deep, nuanced analysis rather than basic explanations."""
+
 
 class GeminiChatRequest(BaseModel):
     """Request model for Gemini chat"""
@@ -99,6 +122,59 @@ class CodeAnalysisRequest(BaseModel):
     )
     verbose_output: Optional[bool] = Field(
         False, description="Show file contents in terminal output"
+    )
+
+
+class FileAnalysisRequest(BaseModel):
+    """Request model for file analysis"""
+
+    files: List[str] = Field(..., description="List of file paths to analyze")
+    question: str = Field(
+        ..., description="Question or analysis request about the files"
+    )
+    system_prompt: Optional[str] = Field(
+        None, description="Optional system prompt for context"
+    )
+    max_tokens: Optional[int] = Field(
+        8192, description="Maximum number of tokens in response"
+    )
+    temperature: Optional[float] = Field(
+        0.2,
+        description="Temperature for analysis (0-1, default 0.2 for high accuracy)",
+    )
+    model: Optional[str] = Field(
+        DEFAULT_MODEL, description=f"Model to use (defaults to {DEFAULT_MODEL})"
+    )
+
+
+class ExtendedThinkRequest(BaseModel):
+    """Request model for extended thinking with Gemini"""
+
+    thought_process: str = Field(
+        ..., description="Claude's analysis, thoughts, plans, or outlines to extend"
+    )
+    context: Optional[str] = Field(
+        None, description="Additional context about the problem or goal"
+    )
+    files: Optional[List[str]] = Field(
+        None, description="Optional file paths for additional context"
+    )
+    focus: Optional[str] = Field(
+        None,
+        description="Specific focus area: architecture, bugs, performance, security, etc.",
+    )
+    system_prompt: Optional[str] = Field(
+        None, description="Optional system prompt for context"
+    )
+    max_tokens: Optional[int] = Field(
+        8192, description="Maximum number of tokens in response"
+    )
+    temperature: Optional[float] = Field(
+        0.7,
+        description="Temperature for creative thinking (0-1, default 0.7 for balanced creativity)",
+    )
+    model: Optional[str] = Field(
+        DEFAULT_MODEL, description=f"Model to use (defaults to {DEFAULT_MODEL})"
     )
 
 
@@ -237,7 +313,8 @@ async def handle_list_tools() -> List[Tool]:
         ),
         Tool(
             name="analyze_code",
-            description="Analyze code files or snippets with Gemini's 1M context window. For large content, use file paths to avoid terminal clutter.",
+            description="Analyze code files or snippets with Gemini's 1M context window. "
+            "For large content, use file paths to avoid terminal clutter.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -248,7 +325,8 @@ async def handle_list_tools() -> List[Tool]:
                     },
                     "code": {
                         "type": "string",
-                        "description": "Direct code content to analyze (use for small snippets only; prefer files for large content)",
+                        "description": "Direct code content to analyze "
+                        "(use for small snippets only; prefer files for large content)",
                     },
                     "question": {
                         "type": "string",
@@ -288,6 +366,94 @@ async def handle_list_tools() -> List[Tool]:
             name="get_version",
             description="Get the version and metadata of the Gemini MCP Server",
             inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
+            name="analyze_file",
+            description="Analyze files with Gemini - always uses file paths for clean terminal output",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "files": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of file paths to analyze",
+                    },
+                    "question": {
+                        "type": "string",
+                        "description": "Question or analysis request about the files",
+                    },
+                    "system_prompt": {
+                        "type": "string",
+                        "description": "Optional system prompt for context",
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "description": "Maximum number of tokens in response",
+                        "default": 8192,
+                    },
+                    "temperature": {
+                        "type": "number",
+                        "description": "Temperature for analysis (0-1, default 0.2 for high accuracy)",
+                        "default": 0.2,
+                        "minimum": 0,
+                        "maximum": 1,
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": f"Model to use (defaults to {DEFAULT_MODEL})",
+                        "default": DEFAULT_MODEL,
+                    },
+                },
+                "required": ["files", "question"],
+            },
+        ),
+        Tool(
+            name="extended_think",
+            description="Collaborate with Gemini on complex problems - share Claude's analysis for deeper insights",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "thought_process": {
+                        "type": "string",
+                        "description": "Claude's analysis, thoughts, plans, or outlines to extend",
+                    },
+                    "context": {
+                        "type": "string",
+                        "description": "Additional context about the problem or goal",
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Optional file paths for additional context",
+                    },
+                    "focus": {
+                        "type": "string",
+                        "description": "Specific focus area: architecture, bugs, performance, security, etc.",
+                    },
+                    "system_prompt": {
+                        "type": "string",
+                        "description": "Optional system prompt for context",
+                    },
+                    "max_tokens": {
+                        "type": "integer",
+                        "description": "Maximum number of tokens in response",
+                        "default": 8192,
+                    },
+                    "temperature": {
+                        "type": "number",
+                        "description": "Temperature for creative thinking (0-1, default 0.7)",
+                        "default": 0.7,
+                        "minimum": 0,
+                        "maximum": 1,
+                    },
+                    "model": {
+                        "type": "string",
+                        "description": f"Model to use (defaults to {DEFAULT_MODEL})",
+                        "default": DEFAULT_MODEL,
+                    },
+                },
+                "required": ["thought_process"],
+            },
         ),
     ]
 
@@ -508,6 +674,165 @@ Configuration:
 For updates, visit: https://github.com/BeehiveInnovations/gemini-mcp-server""",
             )
         ]
+
+    elif name == "analyze_file":
+        # Validate request
+        request_file = FileAnalysisRequest(**arguments)
+
+        try:
+            # Prepare code context from files
+            code_context, summary = prepare_code_context(request_file.files, None)
+
+            # Count approximate tokens
+            estimated_tokens = len(code_context) // 4
+            if estimated_tokens > MAX_CONTEXT_TOKENS:
+                return [
+                    TextContent(
+                        type="text",
+                        text=f"Error: File content too large (~{estimated_tokens:,} tokens). "
+                        f"Maximum is {MAX_CONTEXT_TOKENS:,} tokens.",
+                    )
+                ]
+
+            # Use the specified model with optimized settings
+            model_name = request_file.model or DEFAULT_MODEL
+            temperature = (
+                request_file.temperature if request_file.temperature is not None else 0.2
+            )
+            max_tokens = request_file.max_tokens if request_file.max_tokens is not None else 8192
+
+            model = genai.GenerativeModel(
+                model_name=model_name,
+                generation_config={
+                    "temperature": temperature,
+                    "max_output_tokens": max_tokens,
+                    "candidate_count": 1,
+                },
+            )
+
+            # Prepare prompt
+            system_prompt = request_file.system_prompt or DEVELOPER_SYSTEM_PROMPT
+            full_prompt = f"""{system_prompt}
+
+=== USER REQUEST ===
+{request_file.question}
+=== END USER REQUEST ===
+
+=== FILES TO ANALYZE ===
+{code_context}
+=== END FILES ===
+
+Please analyze the files above and respond to the user's request."""
+
+            # Generate response
+            response = model.generate_content(full_prompt)
+
+            # Handle response
+            if response.candidates and response.candidates[0].content.parts:
+                text = response.candidates[0].content.parts[0].text
+            else:
+                finish_reason = (
+                    response.candidates[0].finish_reason
+                    if response.candidates
+                    else "Unknown"
+                )
+                text = f"Response blocked or incomplete. Finish reason: {finish_reason}"
+
+            # Create a brief summary for terminal
+            brief_summary = f"Analyzing {len(request_file.files)} file(s)"
+            response_text = f"{brief_summary}\n\nGemini's Analysis:\n{text}"
+
+            return [TextContent(type="text", text=response_text)]
+
+        except Exception as e:
+            return [TextContent(type="text", text=f"Error analyzing files: {str(e)}")]
+
+    elif name == "extended_think":
+        # Validate request
+        request_think = ExtendedThinkRequest(**arguments)
+
+        try:
+            # Prepare context parts
+            context_parts = [
+                f"=== CLAUDE'S ANALYSIS ===\n{request_think.thought_process}\n=== END CLAUDE'S ANALYSIS ==="
+            ]
+
+            if request_think.context:
+                context_parts.append(
+                    f"\n=== ADDITIONAL CONTEXT ===\n{request_think.context}\n=== END CONTEXT ==="
+                )
+
+            # Add file contents if provided
+            if request_think.files:
+                file_context, _ = prepare_code_context(request_think.files, None)
+                context_parts.append(
+                    f"\n=== REFERENCE FILES ===\n{file_context}\n=== END FILES ==="
+                )
+
+            full_context = "\n".join(context_parts)
+
+            # Check token limits
+            estimated_tokens = len(full_context) // 4
+            if estimated_tokens > MAX_CONTEXT_TOKENS:
+                return [
+                    TextContent(
+                        type="text",
+                        text=f"Error: Context too large (~{estimated_tokens:,} tokens). "
+                        f"Maximum is {MAX_CONTEXT_TOKENS:,} tokens.",
+                    )
+                ]
+
+            # Use the specified model with creative settings
+            model_name = request_think.model or DEFAULT_MODEL
+            temperature = (
+                request_think.temperature if request_think.temperature is not None else 0.7
+            )
+            max_tokens = request_think.max_tokens if request_think.max_tokens is not None else 8192
+
+            model = genai.GenerativeModel(
+                model_name=model_name,
+                generation_config={
+                    "temperature": temperature,
+                    "max_output_tokens": max_tokens,
+                    "candidate_count": 1,
+                },
+            )
+
+            # Prepare prompt with focus area if specified
+            system_prompt = request_think.system_prompt or EXTENDED_THINKING_PROMPT
+            focus_instruction = ""
+            if request_think.focus:
+                focus_instruction = f"\n\nFOCUS AREA: Please pay special attention to {request_think.focus} aspects."
+
+            full_prompt = f"""{system_prompt}{focus_instruction}
+
+{full_context}
+
+Build upon Claude's analysis with deeper insights, alternative approaches, and critical evaluation."""
+
+            # Generate response
+            response = model.generate_content(full_prompt)
+
+            # Handle response
+            if response.candidates and response.candidates[0].content.parts:
+                text = response.candidates[0].content.parts[0].text
+            else:
+                finish_reason = (
+                    response.candidates[0].finish_reason
+                    if response.candidates
+                    else "Unknown"
+                )
+                text = f"Response blocked or incomplete. Finish reason: {finish_reason}"
+
+            # Create response with clear attribution
+            response_text = f"Extended Analysis by Gemini:\n\n{text}"
+
+            return [TextContent(type="text", text=response_text)]
+
+        except Exception as e:
+            return [
+                TextContent(type="text", text=f"Error in extended thinking: {str(e)}")
+            ]
 
     else:
         return [TextContent(type="text", text=f"Unknown tool: {name}")]
