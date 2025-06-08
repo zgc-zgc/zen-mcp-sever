@@ -113,15 +113,25 @@ Just ask Claude naturally:
 
 **Collaborative Claude + Gemini Examples:**
 ```
-"I've outlined a solution for our authentication system [Claude's analysis above]. Ask gemini to review my approach and identify any security vulnerabilities or architectural concerns I missed"
+"Design an authentication system for our SaaS platform"
+[You provide the design]
+"Now ask gemini to review your authentication design above and identify any security vulnerabilities or architectural concerns"
 
-"Here's my design for the event-driven architecture [Claude's design]. Have gemini think deeper about this, particularly around event ordering, failure scenarios, and recovery strategies"
+"Create an event-driven architecture for our order processing system"  
+[You create the architecture]
+"Have gemini think deeper about your design, particularly around event ordering, failure scenarios, and recovery strategies"
 
-"I've created this optimization plan for our database queries [Claude's plan]. Get gemini to validate my approach and suggest additional optimization opportunities I haven't considered"
+"Analyze our database performance and create an optimization plan"
+[You create the optimization plan]
+"Get gemini to validate your optimization approach and suggest additional improvements you haven't considered"
 
-"Claude suggested this microservices decomposition strategy [outline above]. Ask gemini to review and extend this analysis, focusing on service boundaries and data consistency"
+"Design a microservices decomposition strategy for our monolith"
+[You provide the strategy]
+"Ask gemini to review and extend your analysis, focusing on service boundaries and data consistency"
 
-"I've analyzed the performance bottlenecks and created this improvement plan. Have gemini review my analysis and challenge any assumptions, then help create a detailed implementation roadmap"
+"Identify the performance bottlenecks in our system and create an improvement plan"
+[You analyze and create plan]
+"Have gemini review your analysis and challenge any assumptions, then ask for a detailed implementation roadmap"
 ```
 
 **Parameters Available:**
@@ -197,13 +207,21 @@ Just ask Claude naturally:
 
 **Collaborative Claude + Gemini Examples:**
 ```
-"I've refactored the authentication module [changes above]. Ask gemini to review my refactoring and ensure I haven't introduced any security vulnerabilities"
+"Refactor the authentication module to use dependency injection"
+[You refactor the code]
+"Ask gemini to review your refactoring and ensure you haven't introduced any security vulnerabilities"
 
-"Claude helped me optimize these database queries [code above]. Have gemini review the optimized code for any potential performance regressions or edge cases"
+"Optimize these slow database queries in user_service.py"
+[You optimize the queries]
+"Have gemini review your optimized code for any potential performance regressions or edge cases"
 
-"I've implemented the error handling strategy we discussed. Get gemini to review error_handler.py and validate that all edge cases are covered"
+"Implement a comprehensive error handling strategy for our API"
+[You implement the strategy]
+"Get gemini to review error_handler.py and validate that all edge cases are covered"
 
-"Here's the new API design I created [endpoints above]. Ask gemini to review it against REST best practices and suggest improvements"
+"Design a new REST API for our user management system"
+[You design the API]
+"Ask gemini to review your API design against REST best practices and suggest improvements"
 ```
 
 **Parameters Available:**
@@ -436,54 +454,62 @@ Just ask Claude naturally:
 
 ### 1. **Design → Review → Implement Pattern**
 ```
-You: "Design a real-time collaborative editor"
-Claude: [creates initial architecture]
+"Design a real-time collaborative editor with conflict resolution"
+[You create the initial architecture]
 
-You: "Ask gemini to think deeper about my design above, focusing on conflict 
+"Ask gemini to think deeper about your design above, focusing on conflict 
 resolution and scalability edge cases"
-Gemini: [identifies issues, suggests CRDT/OT hybrid approach]
+[Gemini identifies issues, suggests CRDT/OT hybrid]
 
-You: "Implement the improvements Gemini suggested"
-Claude: [implements enhanced architecture]
+"Now implement the improvements Gemini suggested"
+[You implement the enhanced architecture]
 ```
 
 ### 2. **Code → Review → Fix → Verify Pattern**
 ```
-You: "I've implemented authentication [code above]. Ask gemini to do a security 
-review focusing on OWASP top 10"
-Gemini: [finds vulnerabilities]
+"Implement JWT authentication for our API"
+[You implement the authentication]
 
-Claude: [fixes the issues]
+"Ask gemini to do a security review of your implementation above, 
+focusing on OWASP top 10"
+[Gemini finds vulnerabilities]
 
-You: "Ask gemini to verify my fixes are secure"
-Gemini: [confirms fixes, suggests additional hardening]
+"Fix the security issues Gemini identified"
+[You fix the issues]
+
+"Have gemini verify your fixes are secure"
+[Gemini confirms fixes, suggests hardening]
 ```
 
 ### 3. **Debug → Analyze → Solution Pattern**
 ```
-You: "API crashes under load [error logs]. Ask gemini to debug with context 
-from api/handlers/ and db/queries.js"
-Gemini: [identifies memory leak root cause]
+"Debug why our API crashes under load. Here's the error log: [logs]"
+[You analyze the immediate issue]
 
-Claude: [implements fix]
+"Ask gemini to debug this deeper with context from api/handlers/ 
+and db/queries.js"
+[Gemini identifies root cause]
 
-You: "Have gemini think deeper about preventing this issue long-term"
-Gemini: [provides architectural improvements]
+"Fix the memory leak Gemini found"
+[You implement the fix]
+
+"Have gemini think deeper about preventing this issue long-term"
+[Gemini provides architectural improvements]
 ```
 
 ### 4. **Iterative Improvement Pattern**
 ```
-You: "Let's refactor this module for better maintainability"
-Claude: [creates refactoring plan]
+"Create a refactoring plan for user_service.py to improve maintainability"
+[You create the plan]
 
-You: "Ask gemini to review my refactoring plan and identify potential issues"
-Gemini: [provides feedback on plan]
+"Ask gemini to review your refactoring plan and identify potential issues"
+[Gemini provides feedback]
 
-You: "Start phase 1 refactoring"
-Claude: [implements phase 1]
+"Implement phase 1 of the refactoring"
+[You implement phase 1]
 
-You: "Have gemini review the refactored code against SOLID principles"
-Gemini: [validates and suggests improvements]
+"Have gemini review your refactored code against SOLID principles"
+[Gemini validates and suggests improvements]
 ```
 
 ## Pro Tips
