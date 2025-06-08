@@ -13,11 +13,27 @@ This server acts as a developer assistant that augments Claude Code when you nee
 
 ## 🚀 Quick Start for Claude Code
 
-### 1. Configure in Claude Desktop
+### 1. Clone the Repository
 
-Add to your Claude Desktop configuration file:
+First, clone this repository to your local machine:
+```bash
+git clone https://github.com/BeehiveInnovations/gemini-mcp-server.git
+cd gemini-mcp-server
+```
 
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+Note the full path to this directory - you'll need it for the configuration.
+
+### 2. Configure in Claude Desktop
+
+You can access the configuration file in two ways:
+- **Through Claude Desktop**: Open Claude Desktop → Settings → Developer → Edit Config
+- **Direct file access**: 
+  - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+  - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+Add the following configuration, replacing the path with your actual directory path:
+
+**macOS**:
 ```json
 {
   "mcpServers": {
@@ -31,7 +47,7 @@ Add to your Claude Desktop configuration file:
 }
 ```
 
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Windows**:
 ```json
 {
   "mcpServers": {
@@ -45,18 +61,20 @@ Add to your Claude Desktop configuration file:
 }
 ```
 
-### 2. Restart Claude Desktop
+**Important**: Replace `/path/to/gemini-mcp-server` with the actual path where you cloned the repository.
+
+### 3. Restart Claude Desktop
 
 After adding the configuration, restart Claude Desktop. You'll see "gemini" in the MCP servers list.
 
-### 3. Add to Claude Code
+### 4. Add to Claude Code
 
 To make the server available in Claude Code, run:
 ```bash
 claude mcp add-from-claude-desktop -s user
 ```
 
-### 4. Start Using Natural Language
+### 5. Start Using Natural Language
 
 Just talk to Claude naturally:
 - "Use Gemini to analyze this large file..."

@@ -7,11 +7,15 @@ import json
 from unittest.mock import Mock, patch, AsyncMock
 from pathlib import Path
 import sys
+import os
 
-# Add parent directory to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
+# Add parent directory to path for imports in a cross-platform way
+parent_dir = Path(__file__).resolve().parent.parent
+if str(parent_dir) not in sys.path:
+    sys.path.insert(0, str(parent_dir))
 
-from gemini_server import (
+try:
+    from gemini_server import (
     GeminiChatRequest,
     CodeAnalysisRequest,
     read_file_content,
@@ -21,6 +25,27 @@ from gemini_server import (
     DEVELOPER_SYSTEM_PROMPT,
     DEFAULT_MODEL
 )
+except ImportError as e:
+    # If import fails, try alternative import method
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "gemini_server", 
+        parent_dir / "gemini_server.py"
+    )
+    gemini_server = importlib.util.module_from_spec(spec)
+    sys.modules["gemini_server"] = gemini_server
+    spec.loader.exec_module(gemini_server)
+    
+    from gemini_server import (
+        GeminiChatRequest,
+        CodeAnalysisRequest,
+        read_file_content,
+        prepare_code_context,
+        handle_list_tools,
+        handle_call_tool,
+        DEVELOPER_SYSTEM_PROMPT,
+        DEFAULT_MODEL
+    )
 
 
 class TestModels:
@@ -66,7 +91,7 @@ class TestFileOperations:
     def test_read_file_content_success(self, tmp_path):
         """Test successful file reading"""
         test_file = tmp_path / "test.py"
-        test_file.write_text("def hello():\n    return 'world'")
+        test_file.write_text("def hello():\n    return 'world'", encoding='utf-8')
         
         content = read_file_content(str(test_file))
         assert "=== File:" in content
@@ -75,7 +100,11 @@ class TestFileOperations:
     
     def test_read_file_content_not_found(self):
         """Test reading non-existent file"""
-        content = read_file_content("/nonexistent/file.py")
+        # Use a path that's guaranteed not to exist on any platform
+        nonexistent_path = os.path.join(
+            os.path.sep, "nonexistent_dir_12345", "nonexistent_file.py"
+        )
+        content = read_file_content(nonexistent_path)
         assert "Error: File not found" in content
     
     def test_read_file_content_directory(self, tmp_path):
@@ -86,9 +115,9 @@ class TestFileOperations:
     def test_prepare_code_context_with_files(self, tmp_path):
         """Test preparing context from files"""
         file1 = tmp_path / "file1.py"
-        file1.write_text("print('file1')")
+        file1.write_text("print('file1')", encoding='utf-8')
         file2 = tmp_path / "file2.py"
-        file2.write_text("print('file2')")
+        file2.write_text("print('file2')", encoding='utf-8')
         
         context = prepare_code_context([str(file1), str(file2)], None)
         assert "file1.py" in context
@@ -106,7 +135,7 @@ class TestFileOperations:
     def test_prepare_code_context_mixed(self, tmp_path):
         """Test preparing context from both files and code"""
         test_file = tmp_path / "test.py"
-        test_file.write_text("# From file")
+        test_file.write_text("# From file", encoding='utf-8')
         code = "# Direct code"
         
         context = prepare_code_context([str(test_file)], code)
@@ -136,7 +165,7 @@ class TestToolHandlers:
         assert "Unknown tool" in result[0].text
     
     @pytest.mark.asyncio
-    @patch('gemini_server.genai.GenerativeModel')
+    @patch('google.generativeai.GenerativeModel')
     async def test_handle_call_tool_chat_success(self, mock_model):
         """Test successful chat tool call"""
         # Mock the response
@@ -163,7 +192,7 @@ class TestToolHandlers:
         assert call_args['generation_config']['temperature'] == 0.5
     
     @pytest.mark.asyncio
-    @patch('gemini_server.genai.GenerativeModel')
+    @patch('google.generativeai.GenerativeModel')
     async def test_handle_call_tool_chat_with_developer_prompt(self, mock_model):
         """Test chat tool uses developer prompt when no system prompt provided"""
         mock_response = Mock()
@@ -190,12 +219,12 @@ class TestToolHandlers:
         assert "Must provide either 'files' or 'code'" in result[0].text
     
     @pytest.mark.asyncio
-    @patch('gemini_server.genai.GenerativeModel')
+    @patch('google.generativeai.GenerativeModel')
     async def test_handle_call_tool_analyze_code_success(self, mock_model, tmp_path):
         """Test successful code analysis"""
         # Create test file
         test_file = tmp_path / "test.py"
-        test_file.write_text("def hello(): pass")
+        test_file.write_text("def hello(): pass", encoding='utf-8')
         
         # Mock response
         mock_response = Mock()
@@ -215,7 +244,7 @@ class TestToolHandlers:
         assert result[0].text == "Analysis result"
     
     @pytest.mark.asyncio
-    @patch('gemini_server.genai.list_models')
+    @patch('google.generativeai.list_models')
     async def test_handle_call_tool_list_models(self, mock_list_models):
         """Test listing models"""
         # Mock model data
@@ -240,7 +269,7 @@ class TestErrorHandling:
     """Test error handling scenarios"""
     
     @pytest.mark.asyncio
-    @patch('gemini_server.genai.GenerativeModel')
+    @patch('google.generativeai.GenerativeModel')
     async def test_handle_call_tool_chat_api_error(self, mock_model):
         """Test handling API errors in chat"""
         mock_instance = Mock()
@@ -253,7 +282,7 @@ class TestErrorHandling:
         assert "API Error" in result[0].text
     
     @pytest.mark.asyncio
-    @patch('gemini_server.genai.GenerativeModel')
+    @patch('google.generativeai.GenerativeModel')
     async def test_handle_call_tool_chat_blocked_response(self, mock_model):
         """Test handling blocked responses"""
         mock_response = Mock()
