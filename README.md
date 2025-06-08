@@ -111,6 +111,19 @@ Just ask Claude naturally:
 "I'm implementing a distributed cache. Get gemini to think deeper about edge cases like network partitions and cache invalidation strategies"
 ```
 
+**Collaborative Claude + Gemini Examples:**
+```
+"I've outlined a solution for our authentication system [Claude's analysis above]. Ask gemini to review my approach and identify any security vulnerabilities or architectural concerns I missed"
+
+"Here's my design for the event-driven architecture [Claude's design]. Have gemini think deeper about this, particularly around event ordering, failure scenarios, and recovery strategies"
+
+"I've created this optimization plan for our database queries [Claude's plan]. Get gemini to validate my approach and suggest additional optimization opportunities I haven't considered"
+
+"Claude suggested this microservices decomposition strategy [outline above]. Ask gemini to review and extend this analysis, focusing on service boundaries and data consistency"
+
+"I've analyzed the performance bottlenecks and created this improvement plan. Have gemini review my analysis and challenge any assumptions, then help create a detailed implementation roadmap"
+```
+
 **Parameters Available:**
 - `current_analysis`: Your current thinking (required)
 - `problem_context`: Additional background information
@@ -180,6 +193,17 @@ Just ask Claude naturally:
 "Get gemini to review payment/processor.py with focus on error handling and transaction safety, ensure PCI compliance standards"
 
 "Ask gemini for a full review of user_management/ enforcing SOLID principles and clean code practices"
+```
+
+**Collaborative Claude + Gemini Examples:**
+```
+"I've refactored the authentication module [changes above]. Ask gemini to review my refactoring and ensure I haven't introduced any security vulnerabilities"
+
+"Claude helped me optimize these database queries [code above]. Have gemini review the optimized code for any potential performance regressions or edge cases"
+
+"I've implemented the error handling strategy we discussed. Get gemini to review error_handler.py and validate that all edge cases are covered"
+
+"Here's the new API design I created [endpoints above]. Ask gemini to review it against REST best practices and suggest improvements"
 ```
 
 **Parameters Available:**
@@ -408,290 +432,58 @@ Just ask Claude naturally:
 "Have gemini show server configuration"
 ```
 
-## Real-World Examples
-
-### Example 1: Comprehensive Security Review
-```
-You: "Ask gemini to do a security review of auth/ directory focusing on JWT handling and session management, enforce OWASP standards, only show critical and high severity issues"
-
-Gemini: 
-SECURITY REVIEW (auth/)
-Focus: JWT handling, session management | Standards: OWASP
-==================================================
-
-🔴 CRITICAL auth/jwt.py:45 - Hardcoded Secret Key
-OWASP: A02:2021 - Cryptographic Failures
-→ Impact: Anyone with code access can forge tokens
-→ Fix: 
-  import os
-  SECRET_KEY = os.environ.get('JWT_SECRET')
-  if not SECRET_KEY:
-      raise ValueError("JWT_SECRET environment variable required")
-
-🔴 CRITICAL auth/session.py:78 - No CSRF Protection
-OWASP: A01:2021 - Broken Access Control  
-→ Impact: Cross-site request forgery attacks possible
-→ Fix: Implement double-submit cookie pattern
-  csrf_token = secrets.token_urlsafe(32)
-  response.set_cookie('csrf', csrf_token, httponly=True, samesite='Strict')
-
-🟠 HIGH auth/validate.py:23 - Missing Token Expiration Check
-→ Impact: Tokens valid forever, can't revoke access
-→ Fix:
-  import time
-  if decoded.get('exp', 0) < time.time():
-      raise TokenExpiredError("Token has expired")
-
-SUMMARY: 2 critical, 1 high severity issues found
-Priority: Fix hardcoded secret immediately in production
-```
-
-### Example 2: Complex Performance Debugging
-```
-You: "Ask gemini to debug why our API is slow. Error: Response times spike to 5s under load. Runtime: FastAPI, PostgreSQL 14, running on AWS ECS. Relevant files: api/endpoints.py, db/models.py, db/connection.py. Previous attempts: Added indexes, increased connection pool to 50, still happens"
-
-Gemini:
-DEBUG ANALYSIS: API Performance Issues
-=====================================
-
-ROOT CAUSE IDENTIFIED:
-The performance degradation is caused by a combination of:
-1. Synchronous database operations blocking the async event loop
-2. Missing connection pooling configuration for async operations
-3. Inefficient ORM queries with unnecessary JOINs
-
-EVIDENCE:
-- In api/endpoints.py:134 - Using sync SQLAlchemy session in async endpoint
-- In db/connection.py:45 - Pool configured for sync operations only
-- In db/models.py:89 - Eager loading relationships even when not needed
-
-IMMEDIATE FIXES:
-1. Switch to async database operations:
-   ```python
-   # db/connection.py
-   from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-   
-   engine = create_async_engine(
-       "postgresql+asyncpg://...",
-       pool_size=20,
-       max_overflow=10,
-       pool_pre_ping=True
-   )
-   ```
-
-2. Update endpoints to use async sessions:
-   ```python
-   # api/endpoints.py
-   async def get_users(db: AsyncSession = Depends(get_async_db)):
-       result = await db.execute(select(User))
-       return result.scalars().all()
-   ```
-
-LONG-TERM SOLUTIONS:
-1. Implement query result caching with Redis
-2. Add APM monitoring (e.g., DataDog, New Relic)
-3. Consider read replicas for heavy read operations
-4. Implement database query optimization middleware
-
-VALIDATION:
-After implementing async operations, expect:
-- 80% reduction in response times under load
-- Better connection pool utilization
-- Linear scaling with concurrent requests up to pool limit
-```
-
-### Example 3: Architecture Deep Dive
-```
-You: "Ask gemini to analyze our microservices in services/ directory for an architecture analysis. Question: Are the service boundaries correct and how can we improve inter-service communication? Output format: detailed"
-
-Gemini:
-ARCHITECTURE ANALYSIS: Microservices
-===================================
-
-CURRENT ARCHITECTURE:
-```
-services/
-├── user-service/      (User management, authentication)
-├── order-service/     (Order processing, inventory)
-├── payment-service/   (Payment processing, billing)
-├── notification-service/ (Email, SMS, push notifications)
-└── analytics-service/ (Reporting, metrics)
-```
-
-SERVICE BOUNDARY ANALYSIS:
-
-✅ WELL-DEFINED BOUNDARIES:
-1. payment-service: Clear single responsibility
-2. notification-service: Good abstraction of communication channels
-
-❌ BOUNDARY VIOLATIONS FOUND:
-1. order-service includes inventory management
-   - Should be separate inventory-service
-   - Orders should only reference inventory
-   
-2. user-service handles authentication
-   - Authentication should be separate auth-service
-   - Users and auth have different scaling needs
-
-INTER-SERVICE COMMUNICATION ISSUES:
-
-1. SYNCHRONOUS HTTP EVERYWHERE
-   - Current: All services use REST APIs
-   - Problem: Cascading failures, high latency
-   - Solution: Event-driven for non-critical paths
-
-2. NO SERVICE DISCOVERY
-   - Current: Hardcoded service URLs
-   - Problem: No resilience, manual updates
-   - Solution: Implement Consul or Kubernetes services
-
-3. MISSING CIRCUIT BREAKERS
-   - Current: Direct HTTP calls with basic retry
-   - Problem: Thundering herd, cascade failures
-   - Solution: Hystrix or resilience4j patterns
-
-RECOMMENDED ARCHITECTURE:
-1. Split services:
-   - order-service → order-service + inventory-service
-   - user-service → user-service + auth-service
-
-2. Implement event bus (Kafka/RabbitMQ):
-   - Order events → Inventory updates (async)
-   - Payment complete → Order fulfillment (async)
-   - All services → Analytics (async)
-
-3. Add API Gateway:
-   - Single entry point
-   - Request routing
-   - Rate limiting
-   - Authentication
-
-4. Communication patterns:
-   - Sync: API Gateway → Service (user queries)
-   - Async: Service → Service (events)
-   - Cache: Redis for read-heavy operations
-
-MIGRATION PATH:
-Phase 1: Add message bus, start publishing events
-Phase 2: Services consume events alongside HTTP
-Phase 3: Remove service-to-service HTTP calls
-Phase 4: Extract inventory and auth services
-```
-
 ## Power User Workflows
 
-### 1. **Claude + Gemini Deep Architecture Design**
+### 1. **Design → Review → Implement Pattern**
 ```
-You: "I need to design a real-time collaborative editor like Google Docs"
-Claude: [provides initial architecture with WebSockets and operational transforms]
+You: "Design a real-time collaborative editor"
+Claude: [creates initial architecture]
 
-You: "Ask gemini to think deeper about the conflict resolution system, focusing on 
-scalability and edge cases like network partitions, with reference to my design above"
+You: "Ask gemini to think deeper about my design above, focusing on conflict 
+resolution and scalability edge cases"
+Gemini: [identifies issues, suggests CRDT/OT hybrid approach]
 
-Gemini: "Extended Analysis: Your operational transform approach is solid but consider:
-1. CRDT Alternative: For better partition tolerance, use Yjs or Automerge
-2. Edge Case: Simultaneous edits at same position during network split
-3. Scale Issue: OT server becomes bottleneck at 10K+ concurrent users
-4. Solution: Hybrid approach - CRDTs for text, OT for formatting..."
-
-You: "Based on Gemini's insights, implement the hybrid CRDT/OT system"
-Claude: [implements improved architecture with both approaches]
+You: "Implement the improvements Gemini suggested"
+Claude: [implements enhanced architecture]
 ```
 
-### 2. **Multi-Stage Security Audit**
+### 2. **Code → Review → Fix → Verify Pattern**
 ```
-You: "We're launching our payment system next week. Need a thorough security check"
+You: "I've implemented authentication [code above]. Ask gemini to do a security 
+review focusing on OWASP top 10"
+Gemini: [finds vulnerabilities]
 
-You: "Ask gemini to do a security review of payment/, auth/, and api/ enforcing 
-PCI compliance standards, focus on payment processing and data handling"
+Claude: [fixes the issues]
 
-Gemini: [identifies 3 critical issues: plain text card storage, missing rate limiting, 
-vulnerable to timing attacks]
-
-You: "Fix the critical issues Gemini found, especially the card storage"
-Claude: [implements tokenization, adds rate limiting, constant-time comparisons]
-
-You: "Ask gemini to review the fixes I just made and check for any remaining issues"
-Gemini: "Fixes look good. Additional recommendations: Add audit logging, implement 
-fraud detection webhooks, consider 3D Secure for high-risk transactions"
+You: "Ask gemini to verify my fixes are secure"
+Gemini: [confirms fixes, suggests additional hardening]
 ```
 
-### 3. **Production Issue Debugging Flow**
+### 3. **Debug → Analyze → Solution Pattern**
 ```
-Situation: Production API crashing under load
+You: "API crashes under load [error logs]. Ask gemini to debug with context 
+from api/handlers/ and db/queries.js"
+Gemini: [identifies memory leak root cause]
 
-You: "Our API keeps crashing. Here's the error log: [OOM killed, memory usage graph]"
+Claude: [implements fix]
 
-You: "Ask gemini to debug this out-of-memory issue. Runtime: Node.js 18, Express, 
-MongoDB. Relevant files: api/handlers/, db/queries.js. Previous attempts: Increased 
-memory to 4GB, added pm2 clustering, still crashes at 500 concurrent users"
-
-Gemini: "ROOT CAUSE: Memory leak from unclosed MongoDB cursors
-- handlers/search.js:145 creates cursor but never closes on error
-- Cursor timeout is 10 minutes, accumulating during high load
-IMMEDIATE FIX: Add try-finally blocks to ensure cursor.close()
-LONG-TERM: Implement connection pooling with automatic cleanup"
-
-You: "Implement the cursor cleanup fix Gemini identified"
-Claude: [adds proper cursor management with try-finally blocks]
-
-You: "Ask gemini to think deeper about our MongoDB connection strategy to prevent 
-this in the future, reference the current db/connection.js"
-
-Gemini: [provides connection pool architecture with automatic cleanup, monitoring, 
-and circuit breakers]
+You: "Have gemini think deeper about preventing this issue long-term"
+Gemini: [provides architectural improvements]
 ```
 
-### 4. **Code Quality Evolution**
+### 4. **Iterative Improvement Pattern**
 ```
-You: "Our codebase is becoming hard to maintain. Let's do a quality assessment"
+You: "Let's refactor this module for better maintainability"
+Claude: [creates refactoring plan]
 
-You: "Ask gemini to analyze src/ for a quality analysis, identify technical debt 
-and give actionable improvements"
+You: "Ask gemini to review my refactoring plan and identify potential issues"
+Gemini: [provides feedback on plan]
 
-Gemini: [identifies: inconsistent error handling, mixed async patterns, 
-circular dependencies, missing tests for critical paths]
+You: "Start phase 1 refactoring"
+Claude: [implements phase 1]
 
-You: "Create a refactoring plan based on Gemini's analysis"
-Claude: [creates phased refactoring plan with priority order]
-
-You: "Ask gemini to review phase 1 of our refactoring in refactor/phase1/, 
-ensure we're following SOLID principles"
-
-Gemini: "Phase 1 Review: Good progress on SRP, but found issues:
-- UserService still has multiple responsibilities
-- Missing dependency injection in 3 places
-- Suggest extracting UserAuthenticationService"
-
-You: "Apply Gemini's suggestions to complete phase 1"
-Claude: [refactors following the feedback]
-```
-
-### 5. **Performance Optimization Pipeline**
-```
-You: "The data processing pipeline is too slow, need to optimize"
-
-You: "Ask gemini to do a performance analysis of pipeline/, processors/, and 
-workers/, identify bottlenecks"
-
-Gemini: "Performance Analysis:
-BOTTLENECKS:
-1. Single-threaded JSON parsing in processors/transform.js
-2. Synchronous file I/O blocking event loop
-3. No batching - processing records one at a time
-
-IMPACT: 
-- Current: 100 records/sec
-- Potential: 10,000 records/sec"
-
-You: "Ask gemini to think deeper about the batching strategy, considering memory 
-constraints and error handling"
-
-Gemini: [provides detailed batching implementation with backpressure, memory limits, 
-and partial batch retry logic]
-
-You: "Implement the optimizations following Gemini's design"
-Claude: [implements multi-threaded processing, async I/O, intelligent batching]
+You: "Have gemini review the refactored code against SOLID principles"
+Gemini: [validates and suggests improvements]
 ```
 
 ## Pro Tips
