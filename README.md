@@ -180,14 +180,14 @@ Be specific about what you want from Gemini:
 
 ### Common Workflows
 
-#### 1. **Extended Code Review**
+#### 1. **Claude's Extended Thinking + Gemini Validation**
 ```
-You: "Implement feature X"
-Claude: [implements]
-You: "Use Gemini to review this implementation for scalability issues"
-Gemini: [provides detailed feedback]
-You: "Based on Gemini's feedback, improve the implementation"
-Claude: [refines based on feedback]
+You: "Design a distributed task queue system"
+Claude: [provides detailed architecture and implementation plan]
+You: "Share your complete design with Gemini and ask it to identify potential race conditions or failure modes"
+Gemini: [analyzes and finds edge cases]
+You: "Address the issues Gemini found"
+Claude: [updates design with safeguards]
 ```
 
 #### 2. **Large File Analysis**
@@ -204,11 +204,16 @@ Claude: [refines based on feedback]
 "Ask Gemini to find all circular dependencies in /src"
 ```
 
-#### 4. **Second Opinion & Validation**
+#### 4. **Claude-Driven Design with Gemini Validation**
 ```
-"I'm planning to refactor using pattern X. Ask Gemini for potential issues"
-"Use Gemini to validate my database schema design"
-"Have Gemini suggest alternative approaches to this algorithm"
+Claude: "I've designed a caching strategy using Redis with TTL-based expiration..."
+You: "Share my caching design with Gemini and ask for edge cases I might have missed"
+
+Claude: "Here's my implementation plan for the authentication system: [detailed plan]"
+You: "Use Gemini to analyze this plan and identify security vulnerabilities or scalability issues"
+
+Claude: "I'm thinking of using this approach for the data pipeline: [approach details]"
+You: "Have Gemini review my approach and check these 10 files for compatibility issues"
 ```
 
 #### 5. **Security & Performance Audits**
@@ -219,10 +224,25 @@ Claude: [refines based on feedback]
 ```
 
 ### Best Practices
-- Use Gemini when you need analysis beyond Claude's context window
-- Leverage Gemini's 1M token limit for whole-codebase analysis
-- Combine both assistants: Claude for implementation, Gemini for review
-- Be specific in your requests for more accurate responses
+- Let Claude do the primary thinking and design work
+- Use Gemini as a validation layer for edge cases and extended context
+- Share Claude's complete thoughts with Gemini for comprehensive review
+- Have Gemini analyze files that are too large for Claude
+- Use the feedback loop: Claude designs → Gemini validates → Claude refines
+
+### Real-World Example Flow
+```
+1. You: "Create a microservices architecture for our e-commerce platform"
+2. Claude: [Designs comprehensive architecture with service boundaries, APIs, data flow]
+3. You: "Take my complete architecture design and have Gemini analyze it for:
+   - Potential bottlenecks
+   - Missing error handling
+   - Security vulnerabilities
+   - Scalability concerns"
+4. Gemini: [Provides detailed analysis with specific concerns]
+5. You: "Based on Gemini's analysis, update the architecture"
+6. Claude: [Refines design addressing all concerns]
+```
 
 ## 📝 Notes
 
