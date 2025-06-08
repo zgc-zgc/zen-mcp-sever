@@ -113,26 +113,15 @@ Just ask Claude naturally:
 
 **Collaborative Claude + Gemini Examples:**
 ```
-# First prompt to Claude:
-"Design an authentication system for our SaaS platform with JWT tokens and OAuth2"
+"Design an authentication system for our SaaS platform. Then ask gemini to review your design for security vulnerabilities. After getting gemini's feedback, incorporate the suggestions and show me the final improved design."
 
-# After Claude responds, second prompt:
-"Now ask gemini to review the authentication design above and identify any security vulnerabilities or architectural concerns"
+"Create an event-driven architecture for our order processing system. Share it with gemini to think deeper about event ordering and failure scenarios. Then integrate gemini's insights and present me with the enhanced architecture."
 
-# Another example flow:
-"Create an event-driven architecture for our order processing system"
-# Then:
-"Have gemini think deeper about the design above, particularly around event ordering, failure scenarios, and recovery strategies"
+"Analyze our database performance and create an optimization plan. Have gemini validate your approach and suggest additional improvements. Combine both your analysis and gemini's suggestions into a comprehensive optimization strategy."
 
-# Performance optimization flow:
-"Analyze our database performance and create an optimization plan"
-# Then:
-"Get gemini to validate the optimization approach above and suggest additional improvements"
+"Design a microservices decomposition strategy for our monolith. Ask gemini to review it focusing on service boundaries and data consistency. Based on gemini's feedback, refine the strategy and give me the final decomposition plan."
 
-# Architecture review flow:
-"Design a microservices decomposition strategy for our monolith application"
-# Then:
-"Ask gemini to review and extend the analysis above, focusing on service boundaries and data consistency"
+"Think deeply about implementing a caching strategy for our API. Share your analysis with gemini for validation and additional ideas. Then create a final implementation plan that incorporates both your insights and gemini's recommendations."
 ```
 
 **Parameters Available:**
@@ -208,25 +197,15 @@ Just ask Claude naturally:
 
 **Collaborative Claude + Gemini Examples:**
 ```
-# Refactoring review flow:
-"Refactor the authentication module to use dependency injection"
-# After refactoring:
-"Ask gemini to review the refactored auth module above and ensure I haven't introduced any security vulnerabilities"
+"Refactor the authentication module to use dependency injection. Then ask gemini to review your refactoring for any security vulnerabilities. Based on gemini's feedback, make any necessary adjustments and show me the final secure implementation."
 
-# Performance optimization review:
-"Optimize these slow database queries in user_service.py"
-# After optimization:
-"Have gemini review the optimized queries above for any potential performance regressions or edge cases"
+"Optimize the slow database queries in user_service.py. Have gemini review your optimizations for potential regressions or edge cases. Incorporate gemini's suggestions and present the final optimized queries with performance analysis."
 
-# Implementation review:
-"Implement a comprehensive error handling strategy for our API"
-# After implementation:
-"Get gemini to review error_handler.py and validate that all edge cases are covered"
+"Implement error handling for our API. Ask gemini to review error_handler.py and validate edge case coverage. Based on gemini's analysis, enhance the error handling and show me the complete robust solution."
 
-# API design review:
-"Design a new REST API for our user management system"
-# After design:
-"Ask gemini to review the API design above against REST best practices and suggest improvements"
+"Design a REST API for user management. Get gemini to review it against REST best practices. Using gemini's suggestions, refine the API design and provide me with the final specification including all improvements."
+
+"Review the payment module for code quality issues. Share your findings with gemini for a second opinion and additional insights. Combine both reviews into a comprehensive report with prioritized fixes."
 ```
 
 **Parameters Available:**
@@ -306,6 +285,15 @@ Just ask Claude naturally:
 "Ask gemini to debug this memory leak in the image processing service. Memory usage grows to 4GB after 1000 images. Stack: Python with Pillow, running in Docker. Files: image_processor.py, dockerfile"
 ```
 
+**Collaborative Claude + Gemini Examples:**
+```
+"I'm getting 'ConnectionPool limit exceeded' errors under load. Debug the issue and ask gemini to analyze it deeper with context from db/pool.py. Based on gemini's root cause analysis, implement a fix and have gemini validate the solution will scale. Show me the final fix with explanation."
+
+"Our API is crashing with OOM errors. Analyze the memory usage patterns, then ask gemini to debug with heap dumps and profiler output. Implement the fix gemini suggests, then have gemini provide long-term optimization strategies. Present the complete solution."
+
+"Debug why tests fail randomly on CI. Once you identify potential causes, share with gemini along with test logs and CI configuration. Apply gemini's debugging strategy, then ask gemini to suggest preventive measures. Give me the fix and prevention plan."
+```
+
 **Parameters Available:**
 - `error_description`: Error message or symptoms (required)
 - `error_context`: Stack traces, logs, additional context
@@ -369,6 +357,15 @@ Just ask Claude naturally:
 "Ask gemini to analyze tests/, src/, and coverage.xml for a quality analysis. Give me actionable recommendations for improving test coverage"
 
 "Have gemini examine the microservices in services/ directory for an architecture analysis. Focus on service boundaries and communication patterns. Output format: summary"
+```
+
+**Collaborative Claude + Gemini Examples:**
+```
+"Analyze our project structure in src/ and identify architectural improvements. Share your analysis with gemini for a deeper review of design patterns and anti-patterns. Based on both analyses, create a refactoring roadmap and present the prioritized improvements."
+
+"Perform a security analysis of our authentication system. Ask gemini to analyze auth/, middleware/, and api/ for vulnerabilities. Combine your findings with gemini's to create a comprehensive security report with fixes prioritized by risk level."
+
+"Analyze the data processing pipeline for performance bottlenecks. Have gemini examine pipeline/, workers/, and queues/ to identify optimization opportunities. Synthesize both analyses into an optimization plan with expected performance gains."
 ```
 
 **Parameters Available:**
@@ -438,6 +435,15 @@ Just ask Claude naturally:
 "Ask gemini about implementing zero-downtime deployments with our current stack: Node.js, PostgreSQL, Redis"
 ```
 
+**Collaborative Claude + Gemini Examples:**
+```
+"Research the best message queue for our use case (high throughput, exactly-once delivery). Ask gemini to compare RabbitMQ, Kafka, and AWS SQS. Based on gemini's analysis and your research, recommend the best option with implementation plan."
+
+"Design a caching strategy for our API. Get gemini's input on Redis vs Memcached vs in-memory caching. Combine both perspectives to create a comprehensive caching implementation guide."
+
+"Explain how to implement the Circuit Breaker pattern. Ask gemini to provide advanced implementation details and edge cases. Create a complete implementation guide combining both explanations with code examples."
+```
+
 **Parameters Available:**
 - `prompt`: Your question or topic (required)
 - `context_files`: Optional files to provide context
@@ -459,33 +465,22 @@ Just ask Claude naturally:
 
 ### 1. **Design → Review → Implement Pattern**
 ```
-Step 1: "Design a real-time collaborative editor with conflict resolution"
-Step 2: "Ask gemini to think deeper about the design above, focusing on conflict resolution and scalability edge cases"
-Step 3: "Implement the improvements Gemini suggested for the collaborative editor"
+"Design a real-time collaborative editor with conflict resolution. Once you have the design, ask gemini to think deeper about it focusing on edge cases and scalability. Then implement an improved version incorporating gemini's suggestions and show me the final architecture."
 ```
 
 ### 2. **Code → Review → Fix → Verify Pattern**
 ```
-Step 1: "Implement JWT authentication for our API"
-Step 2: "Ask gemini to do a security review of the implementation above, focusing on OWASP top 10"
-Step 3: "Fix the security issues Gemini identified"
-Step 4: "Have gemini verify the fixes above are secure"
+"Implement JWT authentication for our API. Then ask gemini to do a security review focusing on OWASP top 10. Fix any issues gemini identifies, then have gemini verify the fixes are secure. Finally, show me the secure implementation with a summary of what was fixed."
 ```
 
 ### 3. **Debug → Analyze → Solution Pattern**
 ```
-Step 1: "Debug why our API crashes under load. Here's the error log: [paste logs]"
-Step 2: "Ask gemini to debug this deeper with context from api/handlers/ and db/queries.js"
-Step 3: "Fix the memory leak Gemini found"
-Step 4: "Have gemini think deeper about preventing this issue long-term"
+"Debug why our API crashes under load. Here's the error log: [logs]. Ask gemini to analyze this deeper with context from api/handlers/ and db/queries.js. Based on gemini's root cause analysis, implement a fix. Then have gemini suggest long-term architectural improvements to prevent similar issues. Present me with both the immediate fix and the long-term solution."
 ```
 
 ### 4. **Iterative Improvement Pattern**
 ```
-Step 1: "Create a refactoring plan for user_service.py to improve maintainability"
-Step 2: "Ask gemini to review the refactoring plan above and identify potential issues"
-Step 3: "Implement phase 1 of the refactoring based on the plan"
-Step 4: "Have gemini review the refactored code above against SOLID principles"
+"Create a refactoring plan for user_service.py to improve maintainability. Share the plan with gemini for feedback on potential issues. Implement phase 1 incorporating gemini's suggestions. Have gemini review the refactored code against SOLID principles. Show me the final refactored code with a summary of improvements made based on both your analysis and gemini's feedback."
 ```
 
 ## Pro Tips
