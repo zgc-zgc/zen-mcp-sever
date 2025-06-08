@@ -237,7 +237,7 @@ async def handle_list_tools() -> List[Tool]:
         ),
         Tool(
             name="analyze_code",
-            description="Analyze code files or snippets with Gemini's 1M context window",
+            description="Analyze code files or snippets with Gemini's 1M context window. For large content, use file paths to avoid terminal clutter.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -248,7 +248,7 @@ async def handle_list_tools() -> List[Tool]:
                     },
                     "code": {
                         "type": "string",
-                        "description": "Direct code content to analyze (alternative to files)",
+                        "description": "Direct code content to analyze (use for small snippets only; prefer files for large content)",
                     },
                     "question": {
                         "type": "string",

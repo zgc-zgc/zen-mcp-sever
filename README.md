@@ -167,6 +167,8 @@ Specialized tool for analyzing large files or multiple files that exceed Claude'
 "Have Gemini review these files together: auth.py, users.py, permissions.py"
 ```
 
+**Note on Terminal Output:** When using direct code input, the MCP client displays the full content in the terminal. For better readability with large content, save it to a file first and provide the file path instead.
+
 ### `list_models`
 Lists available Gemini models (defaults to 2.5 Pro Preview).
 
