@@ -21,6 +21,20 @@ import google.generativeai as genai
 DEFAULT_MODEL = "gemini-2.5-pro-preview-06-05"
 MAX_CONTEXT_TOKENS = 1000000  # 1M tokens
 
+# Developer-focused system prompt for Claude Code usage
+DEVELOPER_SYSTEM_PROMPT = """You are an expert software developer and code analyst, similar to Claude Code. 
+You excel at:
+- Writing clean, efficient, and well-documented code
+- Debugging and solving complex programming problems
+- Explaining technical concepts clearly
+- Following best practices and design patterns
+- Providing thoughtful code reviews and suggestions
+- Understanding system architecture and design
+- Helping with testing strategies and implementation
+- Optimizing performance and identifying bottlenecks
+
+You should be direct, helpful, and focused on practical solutions. When analyzing code, provide actionable insights and concrete improvements. Always consider the broader context and long-term maintainability."""
+
 
 class GeminiChatRequest(BaseModel):
     """Request model for Gemini chat"""
@@ -202,10 +216,12 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 }
             )
             
-            # Prepare the prompt
-            full_prompt = request.prompt
+            # Prepare the prompt with automatic developer context if no system prompt provided
             if request.system_prompt:
                 full_prompt = f"{request.system_prompt}\n\n{request.prompt}"
+            else:
+                # Auto-inject developer system prompt for better Claude Code integration
+                full_prompt = f"{DEVELOPER_SYSTEM_PROMPT}\n\n{request.prompt}"
             
             # Generate response
             response = model.generate_content(full_prompt)
@@ -262,8 +278,8 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 }
             )
             
-            # Prepare the full prompt
-            system_prompt = request.system_prompt or "You are an expert code analyst. Provide detailed, accurate analysis of the provided code."
+            # Prepare the full prompt with enhanced developer context
+            system_prompt = request.system_prompt or DEVELOPER_SYSTEM_PROMPT
             full_prompt = f"{system_prompt}\n\nCode to analyze:\n\n{code_context}\n\nQuestion/Request: {request.question}"
             
             # Generate response

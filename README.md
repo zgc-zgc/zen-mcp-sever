@@ -19,6 +19,7 @@ See [MCP_DISCOVERY.md](MCP_DISCOVERY.md) for detailed information about how Clau
 - **List Models**: View all available Gemini models
 - **Configurable Parameters**: Adjust temperature, max tokens, and model selection
 - **System Prompts**: Support for system prompts to set context
+- **Developer Context**: Automatically uses developer-focused system prompt for Claude Code integration
 
 ## Installation
 
@@ -146,6 +147,7 @@ Other available models:
 - If a model returns a blocked response, the server will indicate the finish reason
 - The server estimates tokens as ~4 characters per token
 - Maximum context window is 1 million tokens (~4 million characters)
+- When no system prompt is provided, the server automatically uses a developer-focused prompt similar to Claude Code
 
 ## Tips for Claude Code Users
 
