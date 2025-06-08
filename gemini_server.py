@@ -103,7 +103,7 @@ class CodeAnalysisRequest(BaseModel):
 
 
 # Create the MCP server instance
-server = Server("gemini-server")
+server: Server = Server("gemini-server")
 
 
 # Configure Gemini API
@@ -150,7 +150,7 @@ def prepare_code_context(
 
     # Add file contents
     if files:
-        summary_parts.append(f"📁 Analyzing {len(files)} file(s):")
+        summary_parts.append(f"Analyzing {len(files)} file(s):")
         for file_path in files:
             # Get file content for Gemini
             file_content = read_file_content_for_gemini(file_path)
@@ -171,7 +171,7 @@ def prepare_code_context(
                         preview = "\n".join(preview_lines)
                         if len(preview) > 100:
                             preview = preview[:100] + "..."
-                        summary_parts.append(f"  📄 {file_path} ({size:,} bytes)")
+                        summary_parts.append(f"  {file_path} ({size:,} bytes)")
                         if preview.strip():
                             summary_parts.append(f"     Preview: {preview[:50]}...")
                 except Exception:
@@ -186,7 +186,7 @@ def prepare_code_context(
         )
         context_parts.append(formatted_code)
         preview = code[:100] + "..." if len(code) > 100 else code
-        summary_parts.append(f"💻 Direct code provided ({len(code):,} characters)")
+        summary_parts.append(f"Direct code provided ({len(code):,} characters)")
         summary_parts.append(f"     Preview: {preview}")
 
     full_context = "\n\n".join(context_parts)
@@ -302,11 +302,15 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
         try:
             # Use the specified model with optimized settings
+            model_name = request.model or DEFAULT_MODEL
+            temperature = request.temperature if request.temperature is not None else 0.5
+            max_tokens = request.max_tokens if request.max_tokens is not None else 8192
+
             model = genai.GenerativeModel(
-                model_name=request.model,
+                model_name=model_name,
                 generation_config={
-                    "temperature": request.temperature,
-                    "max_output_tokens": request.max_tokens,
+                    "temperature": temperature,
+                    "max_output_tokens": max_tokens,
                     "candidate_count": 1,
                 },
             )
@@ -342,10 +346,10 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
     elif name == "analyze_code":
         # Validate request
-        request = CodeAnalysisRequest(**arguments)
+        request_analysis = CodeAnalysisRequest(**arguments)
 
         # Check that we have either files or code
-        if not request.files and not request.code:
+        if not request_analysis.files and not request_analysis.code:
             return [
                 TextContent(
                     type="text",
@@ -355,7 +359,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
         try:
             # Prepare code context - always use non-verbose mode for Claude Code compatibility
-            code_context, summary = prepare_code_context(request.files, request.code)
+            code_context, summary = prepare_code_context(request_analysis.files, request_analysis.code)
 
             # Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
             estimated_tokens = len(code_context) // 4
@@ -369,21 +373,25 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 ]
 
             # Use the specified model with optimized settings for code analysis
+            model_name = request_analysis.model or DEFAULT_MODEL
+            temperature = request_analysis.temperature if request_analysis.temperature is not None else 0.2
+            max_tokens = request_analysis.max_tokens if request_analysis.max_tokens is not None else 8192
+
             model = genai.GenerativeModel(
-                model_name=request.model,
+                model_name=model_name,
                 generation_config={
-                    "temperature": request.temperature,
-                    "max_output_tokens": request.max_tokens,
+                    "temperature": temperature,
+                    "max_output_tokens": max_tokens,
                     "candidate_count": 1,
                 },
             )
 
             # Prepare the full prompt with enhanced developer context and clear structure
-            system_prompt = request.system_prompt or DEVELOPER_SYSTEM_PROMPT
+            system_prompt = request_analysis.system_prompt or DEVELOPER_SYSTEM_PROMPT
             full_prompt = f"""{system_prompt}
 
 === USER REQUEST ===
-{request.question}
+{request_analysis.question}
 === END USER REQUEST ===
 
 === CODE TO ANALYZE ===
@@ -408,7 +416,7 @@ marked with their paths and content boundaries."""
                 text = f"Response blocked or incomplete. Finish reason: {finish_reason}"
 
             # Always return response with summary for Claude Code compatibility
-            if request.files or request.code:
+            if request_analysis.files or request_analysis.code:
                 response_text = f"{summary}\n\n🤖 Gemini's Analysis:\n{text}"
             else:
                 response_text = text
@@ -422,14 +430,15 @@ marked with their paths and content boundaries."""
         try:
             # List available models
             models = []
-            for model in genai.list_models():
-                if "generateContent" in model.supported_generation_methods:
+            for model_info in genai.list_models():
+                if (hasattr(model_info, 'supported_generation_methods') and
+                        "generateContent" in model_info.supported_generation_methods):
                     models.append(
                         {
-                            "name": model.name,
-                            "display_name": model.display_name,
-                            "description": model.description,
-                            "is_default": model.name == DEFAULT_MODEL,
+                            "name": model_info.name,
+                            "display_name": getattr(model_info, 'display_name', 'Unknown'),
+                            "description": getattr(model_info, 'description', 'No description'),
+                            "is_default": model_info.name.endswith(DEFAULT_MODEL),
                         }
                     )
 
@@ -458,10 +467,10 @@ Updated: {__updated__}
 Author: {__author__}
 
 Configuration:
-• Default Model: {DEFAULT_MODEL}
-• Max Context: {MAX_CONTEXT_TOKENS:,} tokens
-• Python: {version_info['python_version']}
-• Started: {version_info['server_started']}
+- Default Model: {DEFAULT_MODEL}
+- Max Context: {MAX_CONTEXT_TOKENS:,} tokens
+- Python: {version_info['python_version']}
+- Started: {version_info['server_started']}
 
 For updates, visit: https://github.com/BeehiveInnovations/gemini-mcp-server""",
             )

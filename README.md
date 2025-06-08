@@ -2,7 +2,7 @@
 
 A specialized Model Context Protocol (MCP) server that extends Claude Code's capabilities with Google's Gemini 2.5 Pro Preview, featuring a massive 1M token context window for handling large codebases and complex analysis tasks.
 
-## 🎯 Purpose
+## Purpose
 
 This server acts as a developer assistant that augments Claude Code when you need:
 - Analysis of files too large for Claude's context window
@@ -11,7 +11,7 @@ This server acts as a developer assistant that augments Claude Code when you nee
 - Performance analysis of large codebases
 - Security audits requiring full codebase context
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have the following:
 
@@ -21,7 +21,7 @@ Before you begin, ensure you have the following:
    - Ensure your key is enabled for the `gemini-2.5-pro-preview` model
 4. **Git:** The `git` command-line tool for cloning the repository
 
-## 🚀 Quick Start for Claude Code
+## Quick Start for Claude Code
 
 ### 1. Clone the Repository
 
@@ -114,7 +114,7 @@ Just talk to Claude naturally:
 - "Ask Gemini to review the architecture of these files..."
 - "Have Gemini check this codebase for security issues..."
 
-## 🔍 How It Works
+## How It Works
 
 This server acts as a local proxy between Claude Code and the Google Gemini API, following the Model Context Protocol (MCP):
 
@@ -127,7 +127,7 @@ This server acts as a local proxy between Claude Code and the Google Gemini API,
 
 All processing and API communication happens locally from your machine. Your API key is never exposed to Anthropic.
 
-## 💻 Developer-Optimized Features
+## Developer-Optimized Features
 
 ### Automatic Developer Context
 When no custom system prompt is provided, Gemini automatically operates with deep developer expertise, focusing on:
@@ -147,7 +147,7 @@ When no custom system prompt is provided, Gemini automatically operates with dee
 - Perfect for analyzing entire codebases
 - Maintains context across multiple large files
 
-## 🛠️ Available Tools
+## Available Tools
 
 ### `chat`
 General-purpose developer conversations with Gemini.
@@ -170,7 +170,7 @@ Specialized tool for analyzing large files or multiple files that exceed Claude'
 ### `list_models`
 Lists available Gemini models (defaults to 2.5 Pro Preview).
 
-## 📋 Installation
+## Installation
 
 1. Clone the repository:
    ```bash
@@ -194,7 +194,7 @@ Lists available Gemini models (defaults to 2.5 Pro Preview).
    export GEMINI_API_KEY="your-api-key-here"
    ```
 
-## 🔧 Advanced Configuration
+## Advanced Configuration
 
 ### Custom System Prompts
 Override the default developer prompt when needed:
@@ -217,7 +217,7 @@ While defaulting to `gemini-2.5-pro-preview-06-05`, you can specify other models
 - `gemini-1.5-flash`: Faster responses
 - Use `list_models` to see all available options
 
-## 🎯 Claude Code Integration Examples
+## Claude Code Integration Examples
 
 ### When Claude hits token limits:
 ```
@@ -235,12 +235,12 @@ You: "Use Gemini to analyze all files in /src/core/ and create an architecture d
 You: "Have Gemini profile this codebase and suggest the top 5 performance improvements"
 ```
 
-## 💡 Practical Usage Tips
+## Practical Usage Tips
 
 ### Effective Commands
 Be specific about what you want from Gemini:
-- ✅ "Ask Gemini to identify memory leaks in this code"
-- ❌ "Ask Gemini about this"
+- Good: "Ask Gemini to identify memory leaks in this code"
+- Bad: "Ask Gemini about this"
 
 ### Common Workflows
 
@@ -308,14 +308,14 @@ You: "Have Gemini review my approach and check these 10 files for compatibility 
 6. Claude: [Refines design addressing all concerns]
 ```
 
-## 📝 Notes
+## Notes
 
 - Gemini 2.5 Pro Preview may occasionally block certain prompts due to safety filters
 - If a prompt is blocked by Google's safety filters, the server will return a clear error message to Claude explaining why the request could not be completed
 - Token estimation: ~4 characters per token
 - All file paths should be absolute paths
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Server Not Appearing in Claude
 
@@ -337,7 +337,7 @@ You: "Have Gemini review my approach and check these 10 files for compatibility 
 - **`chmod: command not found` (Windows):** The `chmod +x` command is for macOS/Linux only. Windows users can skip this step
 - **Path not found errors:** Use absolute paths in all configurations, not relative paths like `./run_gemini.sh`
 
-## 🧪 Testing
+## Testing
 
 ### Running Tests Locally
 
@@ -368,7 +368,7 @@ This project uses GitHub Actions for automated testing:
 - Includes linting with flake8, black, isort, and mypy
 - Maintains 80%+ code coverage
 
-## 🤝 Contributing
+## Contributing
 
 This server is designed specifically for Claude Code users. Contributions that enhance the developer experience are welcome!
 
@@ -380,6 +380,6 @@ This server is designed specifically for Claude Code users. Contributions that e
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
-## 📄 License
+## License
 
 MIT License - feel free to customize for your development workflow.
