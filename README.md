@@ -58,6 +58,15 @@ Just ask Claude naturally:
 
 ## Available Tools
 
+**Quick Overview:**
+1. [`think_deeper`](#think_deeper---extended-reasoning-partner) - Extended reasoning and problem-solving
+2. [`review_code`](#review_code---professional-code-review) - Professional code review with severity levels
+3. [`debug_issue`](#debug_issue---expert-debugging-assistant) - Root cause analysis and debugging
+4. [`analyze`](#analyze---smart-file-analysis) - General-purpose file and code analysis
+5. [`chat`](#chat---general-development-chat) - General development conversations
+6. [`list_models`](#list_models---see-available-gemini-models) - List available Gemini models
+7. [`get_version`](#get_version---server-information) - Get server version and configuration
+
 ### `think_deeper` - Extended Reasoning Partner
 **When Claude needs to go deeper on complex problems**
 
@@ -204,15 +213,13 @@ Just ask Claude naturally:
 "Best practices for handling timezone data in Python"
 ```
 
-### Additional Utility Tools
-
-#### `list_models` - See Available Gemini Models
+### `list_models` - See Available Gemini Models
 ```
 "List available Gemini models"
 "Show me what models I can use"
 ```
 
-#### `get_version` - Server Information
+### `get_version` - Server Information
 ```
 "Get Gemini server version"
 "Show server configuration"
