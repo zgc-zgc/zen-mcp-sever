@@ -41,11 +41,11 @@ Add to your `claude_desktop_config.json`:
 
 ### 3. Restart Claude Desktop
 
-### 4. Add to Claude Code (Optional)
+### 4. Connect to Claude Code
 
-To make the server available in Claude Code, run:
+To use the server in Claude Code, run:
 ```bash
-npx @anthropic-ai/claude-code mcp add-from-claude-desktop
+claude mcp add-from-claude-desktop -s user
 ```
 
 ### 5. Start Using It!
