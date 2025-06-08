@@ -2,8 +2,8 @@
 Pytest configuration for Gemini MCP Server tests
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Ensure the parent directory is in the Python path for imports

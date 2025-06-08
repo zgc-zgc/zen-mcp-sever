@@ -2,10 +2,11 @@
 Tests for individual tool implementations
 """
 
-import pytest
 from unittest.mock import Mock, patch
 
-from tools import ThinkDeeperTool, ReviewCodeTool, DebugIssueTool, AnalyzeTool
+import pytest
+
+from tools import AnalyzeTool, DebugIssueTool, ReviewCodeTool, ThinkDeeperTool
 
 
 class TestThinkDeeperTool:

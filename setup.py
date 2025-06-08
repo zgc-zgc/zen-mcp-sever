@@ -2,8 +2,9 @@
 Setup configuration for Gemini MCP Server
 """
 
-from setuptools import setup
 from pathlib import Path
+
+from setuptools import setup
 
 # Read README for long description
 readme_path = Path(__file__).parent / "README.md"

@@ -2,11 +2,12 @@
 Tests for the main server functionality
 """
 
-import pytest
 import json
 from unittest.mock import Mock, patch
 
-from server import handle_list_tools, handle_call_tool
+import pytest
+
+from server import handle_call_tool, handle_list_tools
 
 
 class TestServerTools:

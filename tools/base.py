@@ -3,10 +3,11 @@ Base class for all Gemini MCP tools
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
+
 import google.generativeai as genai
 from mcp.types import TextContent
+from pydantic import BaseModel, Field
 
 
 class ToolRequest(BaseModel):

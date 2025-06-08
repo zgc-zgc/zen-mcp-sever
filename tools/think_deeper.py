@@ -2,12 +2,15 @@
 Think Deeper tool - Extended reasoning and problem-solving
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
+
 from pydantic import Field
-from .base import BaseTool, ToolRequest
+
+from config import MAX_CONTEXT_TOKENS, TEMPERATURE_CREATIVE
 from prompts import THINK_DEEPER_PROMPT
-from utils import read_files, check_token_limit
-from config import TEMPERATURE_CREATIVE, MAX_CONTEXT_TOKENS
+from utils import check_token_limit, read_files
+
+from .base import BaseTool, ToolRequest
 
 
 class ThinkDeeperRequest(ToolRequest):

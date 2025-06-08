@@ -2,27 +2,22 @@
 Gemini MCP Server - Main server implementation
 """
 
-import os
-import sys
 import asyncio
 import logging
+import os
+import sys
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 import google.generativeai as genai
 from mcp.server import Server
+from mcp.server.models import InitializationOptions
 from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
-from mcp.server.models import InitializationOptions
 
-from config import (
-    __version__,
-    __updated__,
-    __author__,
-    DEFAULT_MODEL,
-    MAX_CONTEXT_TOKENS,
-)
-from tools import ThinkDeeperTool, ReviewCodeTool, DebugIssueTool, AnalyzeTool
+from config import (DEFAULT_MODEL, MAX_CONTEXT_TOKENS, __author__, __updated__,
+                    __version__)
+from tools import AnalyzeTool, DebugIssueTool, ReviewCodeTool, ThinkDeeperTool
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -147,8 +142,8 @@ async def handle_call_tool(
 
 async def handle_chat(arguments: Dict[str, Any]) -> List[TextContent]:
     """Handle general chat requests"""
-    from utils import read_files
     from config import TEMPERATURE_BALANCED
+    from utils import read_files
 
     prompt = arguments.get("prompt", "")
     context_files = arguments.get("context_files", [])

@@ -2,17 +2,9 @@
 Tests for configuration
 """
 
-from config import (
-    __version__,
-    __updated__,
-    __author__,
-    DEFAULT_MODEL,
-    MAX_CONTEXT_TOKENS,
-    TEMPERATURE_ANALYTICAL,
-    TEMPERATURE_BALANCED,
-    TEMPERATURE_CREATIVE,
-    TOOL_TRIGGERS,
-)
+from config import (DEFAULT_MODEL, MAX_CONTEXT_TOKENS, TEMPERATURE_ANALYTICAL,
+                    TEMPERATURE_BALANCED, TEMPERATURE_CREATIVE, TOOL_TRIGGERS,
+                    __author__, __updated__, __version__)
 
 
 class TestConfig:

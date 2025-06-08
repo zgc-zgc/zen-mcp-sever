@@ -3,7 +3,7 @@ File reading utilities
 """
 
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 
 def read_file_content(file_path: str) -> str:
