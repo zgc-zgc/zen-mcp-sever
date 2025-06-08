@@ -38,7 +38,14 @@ Add to your Claude Desktop configuration file:
 
 After adding the configuration, restart Claude Desktop. You'll see "gemini" in the MCP servers list.
 
-### 3. Start Using Natural Language
+### 3. Add to Claude Code
+
+To make the server available in Claude Code, run:
+```bash
+claude mcp add-from-claude-desktop -s user
+```
+
+### 4. Start Using Natural Language
 
 Just talk to Claude naturally:
 - "Use Gemini to analyze this large file..."
