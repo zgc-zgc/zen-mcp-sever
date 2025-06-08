@@ -231,9 +231,48 @@ Claude: [refines based on feedback]
 - Token estimation: ~4 characters per token
 - All file paths should be absolute paths
 
+## 🧪 Testing
+
+### Running Tests Locally
+
+```bash
+# Install development dependencies
+pip install -r requirements.txt
+
+# Run tests with coverage
+pytest
+
+# Run tests with verbose output
+pytest -v
+
+# Run specific test file
+pytest tests/test_gemini_server.py
+
+# Generate HTML coverage report
+pytest --cov-report=html
+open htmlcov/index.html  # View coverage report
+```
+
+### Continuous Integration
+
+This project uses GitHub Actions for automated testing:
+- Tests run on every push and pull request
+- Supports Python 3.8 - 3.12
+- Tests on Ubuntu, macOS, and Windows
+- Includes linting with flake8, black, isort, and mypy
+- Maintains 80%+ code coverage
+
 ## 🤝 Contributing
 
 This server is designed specifically for Claude Code users. Contributions that enhance the developer experience are welcome!
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Write tests for your changes
+4. Ensure all tests pass (`pytest`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ## 📄 License
 

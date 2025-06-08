@@ -155,3 +155,7 @@ cython_debug/
 # Test outputs
 test_output/
 *.test.log
+.coverage
+htmlcov/
+coverage.xml
+.pytest_cache/
