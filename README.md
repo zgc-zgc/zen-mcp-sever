@@ -30,8 +30,7 @@ Add to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "gemini": {
-      "command": "python",
-      "args": ["/absolute/path/to/gemini-mcp-server/server.py"],
+      "command": "/absolute/path/to/gemini-mcp-server/run_gemini.sh",
       "env": {
         "GEMINI_API_KEY": "your-gemini-api-key-here"
       }
@@ -39,6 +38,8 @@ Add to your `claude_desktop_config.json`:
   }
 }
 ```
+
+**Windows users**: Use `run_gemini.bat` instead of `run_gemini.sh`
 
 ### 3. Restart Claude Desktop
 
