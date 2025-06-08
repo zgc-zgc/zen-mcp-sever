@@ -13,7 +13,7 @@ Claude is brilliant, but sometimes you need:
 
 This server makes Gemini your development sidekick, handling what Claude can't or extending what Claude starts.
 
-## 🚀 Quickstart (5 minutes)
+## Quickstart (5 minutes)
 
 ### 1. Get a Gemini API Key
 Visit [Google AI Studio](https://makersuite.google.com/app/apikey) and generate a free API key.
@@ -49,7 +49,7 @@ Just ask Claude naturally:
 - "Debug why this test is failing"
 - "Analyze these files to understand the data flow"
 
-## 🧠 Available Tools
+## Available Tools
 
 ### `think_deeper` - Extended Reasoning Partner
 **When Claude needs to go deeper on complex problems**
@@ -211,7 +211,7 @@ Just ask Claude naturally:
 "Show server configuration"
 ```
 
-## 📚 Real-World Examples
+## Real-World Examples
 
 ### Example 1: Comprehensive Security Review
 ```
@@ -262,7 +262,7 @@ RECOMMENDATIONS:
 3. Move validation to service layer
 ```
 
-## 💡 Power User Workflows
+## Power User Workflows
 
 ### 1. **Claude + Gemini Deep Thinking**
 ```
@@ -297,7 +297,7 @@ You: "Think deeper about scalability and failure modes"
 Gemini: [analyzes bottlenecks, suggests circuit breakers, identifies edge cases]
 ```
 
-## 🎯 Pro Tips
+## Pro Tips
 
 ### Natural Language Triggers
 The server recognizes natural phrases. Just talk normally:
@@ -321,28 +321,7 @@ Tools can reference files for additional context:
 "Think deeper about my design, reference the current architecture.md"
 ```
 
-## 🏗️ Architecture
-
-```
-gemini-mcp-server/
-├── server.py          # Main server
-├── config.py          # Configuration
-├── tools/             # Tool implementations
-│   ├── think_deeper.py
-│   ├── review_code.py
-│   ├── debug_issue.py
-│   └── analyze.py
-├── prompts/           # System prompts
-└── utils/             # Utilities
-```
-
-**Extensible Design:**
-- Each tool is a self-contained module
-- Easy to add new tools
-- Consistent interface
-- Type-safe with Pydantic
-
-## 🔧 Installation
+## Installation
 
 1. Clone the repository:
    ```bash
@@ -366,7 +345,7 @@ gemini-mcp-server/
    export GEMINI_API_KEY="your-api-key-here"
    ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! The modular architecture makes it easy to add new tools:
 
@@ -377,10 +356,10 @@ We welcome contributions! The modular architecture makes it easy to add new tool
 
 See existing tools for examples.
 
-## 📝 License
+## License
 
 MIT License - see LICENSE file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built with [MCP](https://modelcontextprotocol.com) by Anthropic and powered by Google's Gemini API.
