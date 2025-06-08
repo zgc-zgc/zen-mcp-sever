@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "gemini": {
+      "command": "/Users/fahad/Developer/gemini-mcp-server/venv/bin/python",
+      "args": ["/Users/fahad/Developer/gemini-mcp-server/gemini_server.py"],
+      "env": {
+        "GEMINI_API_KEY": "your-gemini-api-key-here"
+      }
+    }
+  }
+}
