@@ -18,8 +18,7 @@ import google.generativeai as genai
 
 
 # Default to Gemini 2.5 Pro Preview with maximum context
-# Note: 2.5 Pro Preview has restrictions, falling back to 1.5 Pro for better reliability
-DEFAULT_MODEL = "gemini-1.5-pro-latest"  # More reliable, still has large context
+DEFAULT_MODEL = "gemini-2.5-pro-preview-06-05"
 MAX_CONTEXT_TOKENS = 1000000  # 1M tokens
 
 

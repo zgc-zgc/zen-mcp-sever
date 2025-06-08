@@ -2,6 +2,15 @@
 
 A Model Context Protocol (MCP) server that enables integration with Google's Gemini models, optimized for Gemini 2.5 Pro Preview with 1M token context window.
 
+## How It Works with Claude
+
+Once configured, Claude automatically discovers this server's capabilities. You can use natural language to invoke Gemini:
+- "Ask Gemini about..."
+- "Use Gemini to analyze this file..."
+- "Have Gemini review this code..."
+
+See [MCP_DISCOVERY.md](MCP_DISCOVERY.md) for detailed information about how Claude discovers and uses MCP servers.
+
 ## Features
 
 - **Chat with Gemini**: Send prompts to Gemini 2.5 Pro Preview by default
@@ -115,7 +124,7 @@ When working with large files in Claude Code, you can use the Gemini server like
 
 ## Models
 
-The server defaults to `gemini-2.5-pro-preview-06-05` which supports:
+The server defaults to `gemini-2.5-pro-preview-06-05` (the latest and most capable model) which supports:
 - 1 million token context window
 - Advanced reasoning capabilities
 - Code understanding and analysis
