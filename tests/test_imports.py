@@ -10,10 +10,11 @@ def test_direct_import():
     """Test that gemini_server can be imported directly"""
     try:
         import gemini_server
-        assert hasattr(gemini_server, 'GeminiChatRequest')
-        assert hasattr(gemini_server, 'CodeAnalysisRequest')
-        assert hasattr(gemini_server, 'handle_list_tools')
-        assert hasattr(gemini_server, 'handle_call_tool')
+
+        assert hasattr(gemini_server, "GeminiChatRequest")
+        assert hasattr(gemini_server, "CodeAnalysisRequest")
+        assert hasattr(gemini_server, "handle_list_tools")
+        assert hasattr(gemini_server, "handle_call_tool")
     except ImportError as e:
         pytest.fail(f"Failed to import gemini_server: {e}")
 
@@ -25,8 +26,9 @@ def test_from_import():
             GeminiChatRequest,
             CodeAnalysisRequest,
             DEFAULT_MODEL,
-            DEVELOPER_SYSTEM_PROMPT
+            DEVELOPER_SYSTEM_PROMPT,
         )
+
         assert GeminiChatRequest is not None
         assert CodeAnalysisRequest is not None
         assert isinstance(DEFAULT_MODEL, str)
@@ -39,7 +41,8 @@ def test_google_generativeai_import():
     """Test that google.generativeai can be imported"""
     try:
         import google.generativeai as genai
-        assert hasattr(genai, 'GenerativeModel')
-        assert hasattr(genai, 'configure')
+
+        assert hasattr(genai, "GenerativeModel")
+        assert hasattr(genai, "configure")
     except ImportError as e:
         pytest.fail(f"Failed to import google.generativeai: {e}")

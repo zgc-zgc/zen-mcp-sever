@@ -175,9 +175,9 @@ def prepare_code_context(
                         if preview.strip():
                             summary_parts.append(f"     Preview: {preview[:50]}...")
                 except Exception:
-                    summary_parts.append(f"  📄 {file_path} ({size:,} bytes)")
+                    summary_parts.append(f"  {file_path} ({size:,} bytes)")
             else:
-                summary_parts.append(f"  ❌ {file_path} (not found)")
+                summary_parts.append(f"  {file_path} (not found)")
 
     # Add direct code
     if code:
@@ -303,7 +303,9 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
         try:
             # Use the specified model with optimized settings
             model_name = request.model or DEFAULT_MODEL
-            temperature = request.temperature if request.temperature is not None else 0.5
+            temperature = (
+                request.temperature if request.temperature is not None else 0.5
+            )
             max_tokens = request.max_tokens if request.max_tokens is not None else 8192
 
             model = genai.GenerativeModel(
@@ -359,7 +361,9 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
         try:
             # Prepare code context - always use non-verbose mode for Claude Code compatibility
-            code_context, summary = prepare_code_context(request_analysis.files, request_analysis.code)
+            code_context, summary = prepare_code_context(
+                request_analysis.files, request_analysis.code
+            )
 
             # Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
             estimated_tokens = len(code_context) // 4
@@ -374,8 +378,16 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
 
             # Use the specified model with optimized settings for code analysis
             model_name = request_analysis.model or DEFAULT_MODEL
-            temperature = request_analysis.temperature if request_analysis.temperature is not None else 0.2
-            max_tokens = request_analysis.max_tokens if request_analysis.max_tokens is not None else 8192
+            temperature = (
+                request_analysis.temperature
+                if request_analysis.temperature is not None
+                else 0.2
+            )
+            max_tokens = (
+                request_analysis.max_tokens
+                if request_analysis.max_tokens is not None
+                else 8192
+            )
 
             model = genai.GenerativeModel(
                 model_name=model_name,
@@ -417,7 +429,7 @@ marked with their paths and content boundaries."""
 
             # Always return response with summary for Claude Code compatibility
             if request_analysis.files or request_analysis.code:
-                response_text = f"{summary}\n\n🤖 Gemini's Analysis:\n{text}"
+                response_text = f"{summary}\n\nGemini's Analysis:\n{text}"
             else:
                 response_text = text
 
@@ -431,13 +443,19 @@ marked with their paths and content boundaries."""
             # List available models
             models = []
             for model_info in genai.list_models():
-                if (hasattr(model_info, 'supported_generation_methods') and
-                        "generateContent" in model_info.supported_generation_methods):
+                if (
+                    hasattr(model_info, "supported_generation_methods")
+                    and "generateContent" in model_info.supported_generation_methods
+                ):
                     models.append(
                         {
                             "name": model_info.name,
-                            "display_name": getattr(model_info, 'display_name', 'Unknown'),
-                            "description": getattr(model_info, 'description', 'No description'),
+                            "display_name": getattr(
+                                model_info, "display_name", "Unknown"
+                            ),
+                            "description": getattr(
+                                model_info, "description", "No description"
+                            ),
                             "is_default": model_info.name.endswith(DEFAULT_MODEL),
                         }
                     )
@@ -462,7 +480,7 @@ marked with their paths and content boundaries."""
         return [
             TextContent(
                 type="text",
-                text=f"""🤖 Gemini MCP Server v{__version__}
+                text=f"""Gemini MCP Server v{__version__}
 Updated: {__updated__}
 Author: {__author__}
 
