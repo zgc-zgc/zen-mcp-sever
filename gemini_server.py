@@ -22,18 +22,28 @@ DEFAULT_MODEL = "gemini-2.5-pro-preview-06-05"
 MAX_CONTEXT_TOKENS = 1000000  # 1M tokens
 
 # Developer-focused system prompt for Claude Code usage
-DEVELOPER_SYSTEM_PROMPT = """You are an expert software developer and code analyst, similar to Claude Code. 
-You excel at:
-- Writing clean, efficient, and well-documented code
-- Debugging and solving complex programming problems
-- Explaining technical concepts clearly
-- Following best practices and design patterns
-- Providing thoughtful code reviews and suggestions
-- Understanding system architecture and design
-- Helping with testing strategies and implementation
-- Optimizing performance and identifying bottlenecks
+DEVELOPER_SYSTEM_PROMPT = """You are an expert software developer assistant working alongside Claude Code. Your role is to extend Claude's capabilities when handling large codebases or complex analysis tasks.
 
-You should be direct, helpful, and focused on practical solutions. When analyzing code, provide actionable insights and concrete improvements. Always consider the broader context and long-term maintainability."""
+Core competencies:
+- Deep understanding of software architecture and design patterns
+- Expert-level debugging and root cause analysis
+- Performance optimization and scalability considerations
+- Security best practices and vulnerability identification
+- Clean code principles and refactoring strategies
+- Comprehensive testing approaches (unit, integration, e2e)
+- Modern development practices (CI/CD, DevOps, cloud-native)
+- Cross-platform and cross-language expertise
+
+Your approach:
+- Be precise and technical, avoiding unnecessary explanations
+- Provide actionable, concrete solutions with code examples
+- Consider edge cases and potential issues proactively
+- Focus on maintainability, readability, and long-term sustainability
+- Suggest modern, idiomatic solutions for the given language/framework
+- When reviewing code, prioritize critical issues first
+- Always validate your suggestions against best practices
+
+Remember: You're augmenting Claude Code's capabilities, especially for tasks requiring extensive context or deep analysis that might exceed Claude's token limits."""
 
 
 class GeminiChatRequest(BaseModel):
@@ -41,7 +51,7 @@ class GeminiChatRequest(BaseModel):
     prompt: str = Field(..., description="The prompt to send to Gemini")
     system_prompt: Optional[str] = Field(None, description="Optional system prompt for context")
     max_tokens: Optional[int] = Field(8192, description="Maximum number of tokens in response")
-    temperature: Optional[float] = Field(0.7, description="Temperature for response randomness (0-1)")
+    temperature: Optional[float] = Field(0.5, description="Temperature for response randomness (0-1, default 0.5 for balanced accuracy/creativity)")
     model: Optional[str] = Field(DEFAULT_MODEL, description=f"Model to use (defaults to {DEFAULT_MODEL})")
 
 
@@ -52,7 +62,7 @@ class CodeAnalysisRequest(BaseModel):
     question: str = Field(..., description="Question or analysis request about the code")
     system_prompt: Optional[str] = Field(None, description="Optional system prompt for context")
     max_tokens: Optional[int] = Field(8192, description="Maximum number of tokens in response")
-    temperature: Optional[float] = Field(0.3, description="Temperature for response randomness (0-1)")
+    temperature: Optional[float] = Field(0.2, description="Temperature for code analysis (0-1, default 0.2 for high accuracy)")
     model: Optional[str] = Field(DEFAULT_MODEL, description=f"Model to use (defaults to {DEFAULT_MODEL})")
 
 
@@ -128,8 +138,8 @@ async def handle_list_tools() -> List[Tool]:
                     },
                     "temperature": {
                         "type": "number",
-                        "description": "Temperature for response randomness (0-1)",
-                        "default": 0.7,
+                        "description": "Temperature for response randomness (0-1, default 0.5 for balanced accuracy/creativity)",
+                        "default": 0.5,
                         "minimum": 0,
                         "maximum": 1
                     },
@@ -172,8 +182,8 @@ async def handle_list_tools() -> List[Tool]:
                     },
                     "temperature": {
                         "type": "number",
-                        "description": "Temperature for response randomness (0-1)",
-                        "default": 0.3,
+                        "description": "Temperature for code analysis (0-1, default 0.2 for high accuracy)",
+                        "default": 0.2,
                         "minimum": 0,
                         "maximum": 1
                     },
