@@ -41,7 +41,14 @@ Add to your `claude_desktop_config.json`:
 
 ### 3. Restart Claude Desktop
 
-### 4. Start Using It!
+### 4. Add to Claude Code (Optional)
+
+To make the server available in Claude Code, run:
+```bash
+npx @anthropic-ai/claude-code mcp add-from-claude-desktop
+```
+
+### 5. Start Using It!
 
 Just ask Claude naturally:
 - "Think deeper about this architecture design"
