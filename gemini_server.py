@@ -20,7 +20,7 @@ from mcp.types import TextContent, Tool
 from pydantic import BaseModel, Field
 
 # Version and metadata
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 __updated__ = "2025-06-08"
 __author__ = "Fahad Gilani"
 
