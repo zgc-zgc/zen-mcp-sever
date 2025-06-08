@@ -7,6 +7,7 @@ Enhanced for large-scale code analysis with 1M token context window
 import asyncio
 import json
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -16,6 +17,11 @@ from mcp.server.models import InitializationOptions
 from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 from pydantic import BaseModel, Field
+
+# Version and metadata
+__version__ = "2.2.0"
+__updated__ = "2025-06-08"
+__author__ = "Fahad Gilani"
 
 # Default to Gemini 2.5 Pro Preview with maximum context
 DEFAULT_MODEL = "gemini-2.5-pro-preview-06-05"
@@ -277,6 +283,11 @@ async def handle_list_tools() -> List[Tool]:
             description="List available Gemini models",
             inputSchema={"type": "object", "properties": {}},
         ),
+        Tool(
+            name="get_version",
+            description="Get the version and metadata of the Gemini MCP Server",
+            inputSchema={"type": "object", "properties": {}},
+        ),
     ]
 
 
@@ -425,6 +436,33 @@ marked with their paths and content boundaries."""
 
         except Exception as e:
             return [TextContent(type="text", text=f"Error listing models: {str(e)}")]
+
+    elif name == "get_version":
+        # Return version and metadata information
+        version_info = {
+            "version": __version__,
+            "updated": __updated__,
+            "author": __author__,
+            "default_model": DEFAULT_MODEL,
+            "max_context_tokens": f"{MAX_CONTEXT_TOKENS:,}",
+            "python_version": f"{os.sys.version_info.major}.{os.sys.version_info.minor}.{os.sys.version_info.micro}",
+            "server_started": datetime.now().isoformat(),
+        }
+        
+        return [TextContent(
+            type="text",
+            text=f"""🤖 Gemini MCP Server v{__version__}
+Updated: {__updated__}
+Author: {__author__}
+
+Configuration:
+• Default Model: {DEFAULT_MODEL}
+• Max Context: {MAX_CONTEXT_TOKENS:,} tokens
+• Python: {version_info['python_version']}
+• Started: {version_info['server_started']}
+
+For updates, visit: https://github.com/BeehiveInnovations/gemini-mcp-server"""
+        )]
 
     else:
         return [TextContent(type="text", text=f"Unknown tool: {name}")]

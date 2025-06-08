@@ -139,12 +139,13 @@ class TestToolHandlers:
     async def test_handle_list_tools(self):
         """Test listing available tools"""
         tools = await handle_list_tools()
-        assert len(tools) == 3
+        assert len(tools) == 4  # Updated to include get_version
         
         tool_names = [tool.name for tool in tools]
         assert "chat" in tool_names
         assert "analyze_code" in tool_names
         assert "list_models" in tool_names
+        assert "get_version" in tool_names
     
     @pytest.mark.asyncio
     async def test_handle_call_tool_unknown(self):
