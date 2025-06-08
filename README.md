@@ -6,9 +6,10 @@ The ultimate development partner for Claude - a Model Context Protocol server th
 
 Claude is brilliant, but sometimes you need:
 - **A second opinion** on complex architectural decisions - augment Claude's extended thinking with Gemini's perspective
-- **Deep code analysis** across massive codebases  
-- **Expert debugging** for tricky issues
-- **Professional code reviews** with actionable feedback
+- **Massive context window** (1M tokens) - Gemini 2.5 Pro can analyze entire codebases, read hundreds of files at once, and provide comprehensive insights
+- **Deep code analysis** across massive codebases that exceed Claude's context limits
+- **Expert debugging** for tricky issues with full system context
+- **Professional code reviews** with actionable feedback across entire repositories
 - **A senior developer partner** to validate and extend ideas
 
 This server makes Gemini your development sidekick, handling what Claude can't or extending what Claude starts.
