@@ -427,9 +427,24 @@ marked with their paths and content boundaries."""
                 )
                 text = f"Response blocked or incomplete. Finish reason: {finish_reason}"
 
-            # Always return response with summary for Claude Code compatibility
+            # Create a brief summary for terminal display
             if request_analysis.files or request_analysis.code:
-                response_text = f"{summary}\n\nGemini's Analysis:\n{text}"
+                # Create a very brief summary for terminal
+                brief_summary_parts = []
+                if request_analysis.files:
+                    brief_summary_parts.append(
+                        f"Analyzing {len(request_analysis.files)} file(s)"
+                    )
+                if request_analysis.code:
+                    code_preview = (
+                        request_analysis.code[:20] + "..."
+                        if len(request_analysis.code) > 20
+                        else request_analysis.code
+                    )
+                    brief_summary_parts.append(f"Direct code: {code_preview}")
+
+                brief_summary = " | ".join(brief_summary_parts)
+                response_text = f"{brief_summary}\n\nGemini's Analysis:\n{text}"
             else:
                 response_text = text
 
