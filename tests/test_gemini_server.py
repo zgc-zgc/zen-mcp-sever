@@ -14,8 +14,7 @@ parent_dir = Path(__file__).resolve().parent.parent
 if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
-try:
-    from gemini_server import (
+from gemini_server import (
     GeminiChatRequest,
     CodeAnalysisRequest,
     read_file_content,
@@ -25,27 +24,6 @@ try:
     DEVELOPER_SYSTEM_PROMPT,
     DEFAULT_MODEL
 )
-except ImportError as e:
-    # If import fails, try alternative import method
-    import importlib.util
-    spec = importlib.util.spec_from_file_location(
-        "gemini_server", 
-        parent_dir / "gemini_server.py"
-    )
-    gemini_server = importlib.util.module_from_spec(spec)
-    sys.modules["gemini_server"] = gemini_server
-    spec.loader.exec_module(gemini_server)
-    
-    from gemini_server import (
-        GeminiChatRequest,
-        CodeAnalysisRequest,
-        read_file_content,
-        prepare_code_context,
-        handle_list_tools,
-        handle_call_tool,
-        DEVELOPER_SYSTEM_PROMPT,
-        DEFAULT_MODEL
-    )
 
 
 class TestModels:

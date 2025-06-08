@@ -1,0 +1,51 @@
+"""
+Setup configuration for Gemini MCP Server
+"""
+
+from setuptools import setup, find_packages
+from pathlib import Path
+
+# Read README for long description
+readme_path = Path(__file__).parent / "README.md"
+long_description = ""
+if readme_path.exists():
+    long_description = readme_path.read_text(encoding="utf-8")
+
+setup(
+    name="gemini-mcp-server",
+    version="1.0.0",
+    description="Model Context Protocol server for Google Gemini",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Fahad Yousaf",
+    python_requires=">=3.8",
+    py_modules=["gemini_server"],
+    install_requires=[
+        "mcp>=1.0.0",
+        "google-generativeai>=0.8.0",
+        "python-dotenv>=1.0.0",
+    ],
+    extras_require={
+        "dev": [
+            "pytest>=7.4.0",
+            "pytest-asyncio>=0.21.0",
+            "pytest-cov>=4.1.0",
+            "pytest-mock>=3.11.0",
+        ]
+    },
+    entry_points={
+        "console_scripts": [
+            "gemini-mcp-server=gemini_server:main",
+        ],
+    },
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+    ],
+)
