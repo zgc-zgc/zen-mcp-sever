@@ -1,58 +1,36 @@
-# Gemini MCP Server for Claude Code
+# Gemini MCP Server
 
-A specialized Model Context Protocol (MCP) server that extends Claude Code's capabilities with Google's Gemini 2.5 Pro Preview, featuring a massive 1M token context window for handling large codebases and complex analysis tasks.
+The ultimate development partner for Claude - a Model Context Protocol server that gives Claude access to Google's Gemini 2.5 Pro for extended thinking, code analysis, and problem-solving.
 
-## Purpose
+## Why This Server?
 
-This server acts as a developer assistant that augments Claude Code when you need:
-- Analysis of files too large for Claude's context window
-- Deep architectural reviews across multiple files
-- Extended thinking and complex problem solving
-- Performance analysis of large codebases
-- Security audits requiring full codebase context
+Claude is brilliant, but sometimes you need:
+- **Extended thinking** on complex architectural decisions
+- **Deep code analysis** across massive codebases  
+- **Expert debugging** for tricky issues
+- **Professional code reviews** with actionable feedback
+- **A senior developer partner** to validate and extend ideas
 
-## Prerequisites
+This server makes Gemini your development sidekick, handling what Claude can't or extending what Claude starts.
 
-Before you begin, ensure you have the following:
+## 🚀 Quickstart (5 minutes)
 
-1. **Python:** Python 3.10 or newer. Check your version with `python3 --version`
-2. **Claude Desktop:** A working installation of Claude Desktop and the `claude` command-line tool
-3. **Gemini API Key:** An active API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-   - Ensure your key is enabled for the `gemini-2.5-pro-preview` model
-4. **Git:** The `git` command-line tool for cloning the repository
+### 1. Get a Gemini API Key
+Visit [Google AI Studio](https://makersuite.google.com/app/apikey) and generate a free API key.
 
-## Quick Start for Claude Code
+### 2. Install via Claude Desktop Config
 
-### 1. Clone the Repository
+Add to your `claude_desktop_config.json`:
 
-First, clone this repository to your local machine:
-```bash
-git clone https://github.com/BeehiveInnovations/gemini-mcp-server.git
-cd gemini-mcp-server
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
-# macOS/Linux only: Make the script executable
-chmod +x run_gemini.sh
-```
-
-Note the full path to this directory - you'll need it for the configuration.
-
-### 2. Configure in Claude Desktop
-
-You can access the configuration file in two ways:
-- **Through Claude Desktop**: Open Claude Desktop → Settings → Developer → Edit Config
-- **Direct file access**: 
-  - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-  - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-  - **Linux**: `~/.config/Claude/claude_desktop_config.json`
-
-Add the following configuration, replacing the path with your actual directory path:
-
-**macOS**:
 ```json
 {
   "mcpServers": {
     "gemini": {
-      "command": "/path/to/gemini-mcp-server/run_gemini.sh",
+      "command": "python",
+      "args": ["/absolute/path/to/gemini-mcp-server/server.py"],
       "env": {
         "GEMINI_API_KEY": "your-gemini-api-key-here"
       }
@@ -60,157 +38,311 @@ Add the following configuration, replacing the path with your actual directory p
   }
 }
 ```
-
-**Windows**:
-```json
-{
-  "mcpServers": {
-    "gemini": {
-      "command": "C:\\path\\to\\gemini-mcp-server\\run_gemini.bat",
-      "env": {
-        "GEMINI_API_KEY": "your-gemini-api-key-here"
-      }
-    }
-  }
-}
-```
-
-**Linux**:
-```json
-{
-  "mcpServers": {
-    "gemini": {
-      "command": "/path/to/gemini-mcp-server/run_gemini.sh",
-      "env": {
-        "GEMINI_API_KEY": "your-gemini-api-key-here"
-      }
-    }
-  }
-}
-```
-
-**Important**: Replace the path with the actual absolute path where you cloned the repository:
-- **macOS example**: `/Users/yourname/projects/gemini-mcp-server/run_gemini.sh`
-- **Windows example**: `C:\\Users\\yourname\\projects\\gemini-mcp-server\\run_gemini.bat`
-- **Linux example**: `/home/yourname/projects/gemini-mcp-server/run_gemini.sh`
 
 ### 3. Restart Claude Desktop
 
-After adding the configuration, restart Claude Desktop. You'll see "gemini" in the MCP servers list.
+### 4. Start Using It!
 
-### 4. Add to Claude Code
+Just ask Claude naturally:
+- "Think deeper about this architecture design"
+- "Review this code for security issues"  
+- "Debug why this test is failing"
+- "Analyze these files to understand the data flow"
 
-To make the server available in Claude Code, run:
-```bash
-# This command reads your Claude Desktop configuration and makes
-# the "gemini" server available in your terminal
-claude mcp add-from-claude-desktop -s user
+## 🧠 Available Tools
+
+### `think_deeper` - Extended Reasoning Partner
+**When Claude needs to go deeper on complex problems**
+
+#### Example Prompts:
 ```
-
-### 5. Start Using Natural Language
-
-Just talk to Claude naturally:
-- "Use gemini analyze_file on main.py to find bugs"
-- "Share your analysis with gemini extended_think for deeper insights"
-- "Ask gemini to review the architecture using analyze_file"
-
-**Key tools:**
-- `analyze_file` - Clean file analysis without terminal clutter
-- `extended_think` - Collaborative deep thinking with Claude's analysis
-- `chat` - General conversations
-- `analyze_code` - Legacy tool (prefer analyze_file for files)
-
-## How It Works
-
-This server acts as a local proxy between Claude Code and the Google Gemini API, following the Model Context Protocol (MCP):
-
-1. You issue a command to Claude (e.g., "Ask Gemini to...")
-2. Claude Code sends a request to the local MCP server defined in your configuration
-3. This server receives the request, formats it for the Gemini API, and includes any file contents
-4. The request is sent to the Google Gemini API using your API key
-5. The server receives the response from Gemini
-6. The response is formatted and streamed back to Claude, who presents it to you
-
-All processing and API communication happens locally from your machine. Your API key is never exposed to Anthropic.
-
-## Developer-Optimized Features
-
-### Automatic Developer Context
-When no custom system prompt is provided, Gemini automatically operates with deep developer expertise, focusing on:
-- Clean code principles
-- Performance optimization
-- Security best practices
-- Architectural patterns
-- Testing strategies
-- Modern development practices
-
-### Optimized Temperature Settings
-- **General chat**: 0.5 (balanced accuracy with some creativity)
-- **Code analysis**: 0.2 (high precision for code review)
-
-### Large Context Window
-- Handles up to 1M tokens (~4M characters)
-- Perfect for analyzing entire codebases
-- Maintains context across multiple large files
-
-## Available Tools
-
-### `chat`
-General-purpose developer conversations with Gemini.
-
-**Example uses:**
-```
-"Ask Gemini about the best approach for implementing a distributed cache"
-"Use Gemini to explain the tradeoffs between different authentication strategies"
-```
-
-### `analyze_code` (Legacy)
-Analyzes code files or snippets. For better terminal output, use `analyze_file` instead.
-
-### `analyze_file` (Recommended for Files)
-Clean file analysis - always uses file paths, never shows content in terminal.
-
-**Example uses:**
-```
-"Use gemini analyze_file on README.md to find issues"
-"Ask gemini to analyze_file main.py for performance problems"
-"Have gemini analyze_file on auth.py, users.py, and permissions.py together"
-```
-
-**Benefits:**
-- Terminal always stays clean - only shows "Analyzing N file(s)"
-- Server reads files directly and sends to Gemini
-- No need to worry about prompt phrasing
-- Supports multiple files in one request
-
-### `extended_think`
-Collaborate with Gemini on complex problems by sharing Claude's analysis for deeper insights.
-
-**Example uses:**
-```
-"Share your analysis with gemini extended_think for deeper insights"
-"Use gemini extended_think to validate and extend your architectural design"
-"Ask gemini to extend your thinking on this security analysis"
-```
-
-**Advanced usage with focus areas:**
-```
-"Use gemini extended_think with focus='performance' to drill into scaling issues"
-"Share your design with gemini extended_think focusing on security vulnerabilities"
-"Get gemini to extend your analysis with focus on edge cases"
+"Think deeper about my authentication design"
+"Ultrathink on this distributed system architecture" 
+"Extend my analysis of this performance issue"
+"Challenge my assumptions about this approach"
+"Explore alternative solutions for this caching strategy"
+"Validate my microservices communication approach"
 ```
 
 **Features:**
-- Takes Claude's thoughts, plans, or analysis as input
-- Optional file context for reference
-- Configurable focus areas (architecture, bugs, performance, security)
-- Higher temperature (0.7) for creative problem-solving
-- Designed for collaborative thinking, not just code review
+- Extends Claude's analysis with alternative approaches
+- Finds edge cases and failure modes
+- Validates architectural decisions  
+- Suggests concrete implementations
+- Temperature: 0.7 (creative problem-solving)
 
-### `list_models`
-Lists available Gemini models (defaults to 2.5 Pro Preview).
+**Key Capabilities:**
+- Challenge assumptions constructively
+- Identify overlooked edge cases
+- Suggest alternative design patterns
+- Evaluate scalability implications
+- Consider security vulnerabilities
+- Assess technical debt impact
 
-## Installation
+**Triggers:** think deeper, ultrathink, extend my analysis, explore alternatives, validate my approach
+
+### `review_code` - Professional Code Review  
+**Comprehensive code analysis with prioritized feedback**
+
+#### Example Prompts:
+```
+"Review this code for issues"
+"Security audit of auth.py"
+"Quick review of my changes"
+"Check this code against PEP8 standards"
+"Review the authentication module focusing on OWASP top 10"
+"Performance review of the database queries in models.py"
+"Review api/ directory for REST API best practices"
+```
+
+**Review Types:**
+- `full` - Complete review (default)
+- `security` - Security-focused analysis
+- `performance` - Performance optimization  
+- `quick` - Critical issues only
+
+**Output includes:**
+- Issues by severity with color coding:
+  - 🔴 CRITICAL: Security vulnerabilities, data loss risks
+  - 🟠 HIGH: Bugs, performance issues, bad practices
+  - 🟡 MEDIUM: Code smells, maintainability issues
+  - 🟢 LOW: Style issues, minor improvements
+- Specific fixes with code examples
+- Overall quality assessment
+- Top 3 priority improvements
+- Positive aspects worth preserving
+
+**Customization Options:**
+- `focus_on`: Specific aspects to emphasize
+- `standards`: Coding standards to enforce (PEP8, ESLint, etc.)
+- `severity_filter`: Minimum severity to report
+
+**Triggers:** review code, check for issues, find bugs, security check, code audit
+
+### `debug_issue` - Expert Debugging Assistant
+**Root cause analysis for complex problems**
+
+#### Example Prompts:
+```
+"Debug this TypeError in my async function"
+"Why is this test failing intermittently?"
+"Trace the root cause of this memory leak"
+"Debug this race condition"
+"Help me understand why the API returns 500 errors under load"
+"Debug why my WebSocket connections are dropping"
+"Find the root cause of this deadlock in my threading code"
+```
+
+**Provides:**
+- Root cause identification
+- Step-by-step debugging approach
+- Immediate fixes
+- Long-term solutions
+- Prevention strategies
+
+**Input Options:**
+- `error_description`: The error or symptom
+- `error_context`: Stack traces, logs, error messages
+- `relevant_files`: Files that might be involved
+- `runtime_info`: Environment, versions, configuration
+- `previous_attempts`: What you've already tried
+
+**Triggers:** debug, error, failing, root cause, trace, not working, why is
+
+### `analyze` - Smart File Analysis
+**General-purpose code understanding and exploration**
+
+#### Example Prompts:
+```
+"Analyze main.py to understand the architecture"
+"Examine these files for circular dependencies"
+"Look for performance bottlenecks in this module"
+"Understand how these components interact"
+"Analyze the data flow through the pipeline modules"
+"Check if this module follows SOLID principles"
+"Analyze the API endpoints to create documentation"
+"Examine the test coverage and suggest missing tests"
+```
+
+**Analysis Types:**
+- `architecture` - Design patterns, structure, dependencies
+- `performance` - Bottlenecks, optimization opportunities
+- `security` - Vulnerability assessment, security patterns
+- `quality` - Code metrics, maintainability, test coverage
+- `general` - Comprehensive analysis (default)
+
+**Output Formats:**
+- `detailed` - Comprehensive analysis (default)
+- `summary` - High-level overview
+- `actionable` - Focused on specific improvements
+
+**Special Features:**
+- Always uses file paths (not content) = clean terminal output!
+- Can analyze multiple files to understand relationships
+- Identifies patterns and anti-patterns
+- Suggests refactoring opportunities
+
+**Triggers:** analyze, examine, look at, understand, inspect, check
+
+### `chat` - General Development Chat
+**For everything else**
+
+#### Example Prompts:
+```
+"Ask Gemini about the best caching strategy"
+"Explain how async generators work"
+"What's the difference between these design patterns?"
+"Compare Redis vs Memcached for my use case"
+"Explain the tradeoffs of microservices vs monolith"
+"Best practices for handling timezone data in Python"
+```
+
+### Additional Utility Tools
+
+#### `list_models` - See Available Gemini Models
+```
+"List available Gemini models"
+"Show me what models I can use"
+```
+
+#### `get_version` - Server Information
+```
+"Get Gemini server version"
+"Show server configuration"
+```
+
+## 📚 Real-World Examples
+
+### Example 1: Comprehensive Security Review
+```
+You: "Review the auth/ directory for security issues, focus on JWT handling"
+Gemini: 
+🔴 CRITICAL auth/jwt.py:45 - Secret key hardcoded
+→ Fix: Use environment variable
+  SECRET_KEY = os.environ.get('JWT_SECRET')
+
+🟠 HIGH auth/validate.py:23 - No token expiration check
+→ Fix: Add expiration validation
+  if decoded['exp'] < time.time():
+      raise TokenExpiredError()
+```
+
+### Example 2: Performance Debugging
+```
+You: "Debug why the API endpoint /users/search is slow"
+Gemini:
+ROOT CAUSE: N+1 query problem in user search
+- Each user triggers separate query for roles
+- 100 users = 101 database queries
+
+IMMEDIATE FIX:
+Add eager loading: User.query.options(joinedload('roles'))
+
+LONG-TERM SOLUTION:
+Implement query result caching with Redis
+```
+
+### Example 3: Architecture Analysis
+```
+You: "Analyze src/ to understand the architecture and identify improvements"
+Gemini:
+ARCHITECTURE OVERVIEW:
+- Layered architecture: Controllers → Services → Repositories
+- Good separation of concerns
+- Dependency injection pattern used
+
+ISSUES FOUND:
+1. Circular dependency: UserService ↔ AuthService
+2. Missing abstraction for external APIs
+3. Business logic leaked into controllers
+
+RECOMMENDATIONS:
+1. Extract shared logic to UserAuthService
+2. Add adapter pattern for external APIs
+3. Move validation to service layer
+```
+
+## 💡 Power User Workflows
+
+### 1. **Claude + Gemini Deep Thinking**
+```
+You: "Design a real-time collaborative editor"
+Claude: [provides initial design]
+You: "Think deeper about the conflict resolution"
+Gemini: [explores CRDTs, operational transforms, edge cases]
+You: "Update the design based on Gemini's insights"
+Claude: [refines with deeper understanding]
+```
+
+### 2. **Comprehensive Code Review**
+```
+You: "Review api/auth.py focusing on security"
+Gemini: [identifies SQL injection risk, suggests prepared statements]
+You: "Fix the critical issues Gemini found"
+Claude: [implements secure solution]
+```
+
+### 3. **Complex Debugging**
+```
+Claude: "I see the error but the root cause isn't clear..."
+You: "Debug this with the error context and relevant files"
+Gemini: [traces execution, identifies race condition]
+You: "Implement Gemini's suggested fix"
+```
+
+### 4. **Architecture Validation**
+```
+You: "I've designed a microservices architecture [details]"
+You: "Think deeper about scalability and failure modes"
+Gemini: [analyzes bottlenecks, suggests circuit breakers, identifies edge cases]
+```
+
+## 🎯 Pro Tips
+
+### Natural Language Triggers
+The server recognizes natural phrases. Just talk normally:
+- ❌ "Use the think_deeper tool with current_analysis parameter..."
+- ✅ "Think deeper about this approach"
+
+### Automatic Tool Selection
+Claude will automatically pick the right tool based on your request:
+- "review" → `review_code`
+- "debug" → `debug_issue`
+- "analyze" → `analyze`
+- "think deeper" → `think_deeper`
+
+### Clean Terminal Output
+All file operations use paths, not content, so your terminal stays readable even with large files.
+
+### Context Awareness
+Tools can reference files for additional context:
+```
+"Debug this error with context from app.py and config.py"
+"Think deeper about my design, reference the current architecture.md"
+```
+
+## 🏗️ Architecture
+
+```
+gemini-mcp-server/
+├── server.py          # Main server
+├── config.py          # Configuration
+├── tools/             # Tool implementations
+│   ├── think_deeper.py
+│   ├── review_code.py
+│   ├── debug_issue.py
+│   └── analyze.py
+├── prompts/           # System prompts
+└── utils/             # Utilities
+```
+
+**Extensible Design:**
+- Each tool is a self-contained module
+- Easy to add new tools
+- Consistent interface
+- Type-safe with Pydantic
+
+## 🔧 Installation
 
 1. Clone the repository:
    ```bash
@@ -234,210 +366,21 @@ Lists available Gemini models (defaults to 2.5 Pro Preview).
    export GEMINI_API_KEY="your-api-key-here"
    ```
 
-## Advanced Configuration
+## 🤝 Contributing
 
-### Custom System Prompts
-Override the default developer prompt when needed:
-```python
-{
-  "prompt": "Review this code",
-  "system_prompt": "You are a security expert. Focus only on vulnerabilities."
-}
-```
+We welcome contributions! The modular architecture makes it easy to add new tools:
 
-### Temperature Control
-Adjust for your use case:
-- `0.1-0.3`: Maximum precision (debugging, security analysis)
-- `0.4-0.6`: Balanced (general development tasks)
-- `0.7-0.9`: Creative solutions (architecture design, brainstorming)
+1. Create a new tool in `tools/`
+2. Inherit from `BaseTool`
+3. Implement required methods
+4. Add to `TOOLS` in `server.py`
 
-### Model Selection
-While defaulting to `gemini-2.5-pro-preview-06-05`, you can specify other models:
-- `gemini-1.5-pro-latest`: Stable alternative
-- `gemini-1.5-flash`: Faster responses
-- Use `list_models` to see all available options
+See existing tools for examples.
 
-## Claude Code Integration Examples
+## 📝 License
 
-### When Claude hits token limits:
-```
-Claude: "This file is too large for me to analyze fully..."
-You: "Use Gemini to analyze the entire file and identify the main components"
-```
+MIT License - see LICENSE file for details.
 
-### For architecture reviews:
-```
-You: "Use Gemini to analyze all files in /src/core/ and create an architecture diagram"
-```
+## 🙏 Acknowledgments
 
-### For performance optimization:
-```
-You: "Have Gemini profile this codebase and suggest the top 5 performance improvements"
-```
-
-## Practical Usage Tips
-
-### Effective Commands
-Be specific about what you want from Gemini:
-- Good: "Ask Gemini to identify memory leaks in this code"
-- Bad: "Ask Gemini about this"
-
-### Clean Terminal Output
-When analyzing files, explicitly mention the files parameter:
-- "Use gemini analyze_code with files=['app.py'] to find bugs"
-- "Analyze package.json using gemini's files parameter"
-This prevents Claude from displaying the entire file content in your terminal.
-
-### Common Workflows
-
-#### 1. **Extended Thinking Partnership**
-```
-You: "Design a distributed task queue system"
-Claude: [provides detailed architecture and implementation plan]
-You: "Use gemini extended_think to validate and extend this design"
-Gemini: [identifies gaps, suggests alternatives, finds edge cases]
-You: "Address the issues Gemini found"
-Claude: [updates design with improvements]
-```
-
-#### 2. **Clean File Analysis (No Terminal Clutter)**
-```
-"Use gemini analyze_file on engine.py to find performance issues"
-"Ask gemini to analyze_file database.py and suggest optimizations"
-"Have gemini analyze_file on all files in /src/core/"
-```
-
-#### 3. **Multi-File Architecture Review**
-```
-"Use gemini analyze_file on auth.py, users.py, permissions.py to map dependencies"
-"Ask gemini to analyze_file the entire /src/api/ directory for security issues"
-"Have gemini analyze_file all model files to check for N+1 queries"
-```
-
-#### 4. **Deep Collaborative Analysis**
-```
-Claude: "Here's my analysis of the memory leak: [detailed investigation]"
-You: "Share this with gemini extended_think focusing on root causes"
-
-Claude: "I've designed this caching strategy: [detailed design]"
-You: "Use gemini extended_think with focus='performance' to stress-test this design"
-
-Claude: "Here's my security assessment: [findings]"
-You: "Get gemini to extended_think on this with files=['auth.py', 'crypto.py'] for context"
-```
-
-#### 4. **Claude-Driven Design with Gemini Validation**
-```
-Claude: "I've designed a caching strategy using Redis with TTL-based expiration..."
-You: "Share my caching design with Gemini and ask for edge cases I might have missed"
-
-Claude: "Here's my implementation plan for the authentication system: [detailed plan]"
-You: "Use Gemini to analyze this plan and identify security vulnerabilities or scalability issues"
-
-Claude: "I'm thinking of using this approach for the data pipeline: [approach details]"
-You: "Have Gemini review my approach and check these 10 files for compatibility issues"
-```
-
-#### 5. **Security & Performance Audits**
-```
-"Use Gemini to security audit this authentication flow"
-"Have Gemini identify performance bottlenecks in this codebase"
-"Ask Gemini to check for common security vulnerabilities"
-```
-
-### Best Practices
-- Let Claude do the primary thinking and design work
-- Use Gemini as a validation layer for edge cases and extended context
-- Share Claude's complete thoughts with Gemini for comprehensive review
-- Have Gemini analyze files that are too large for Claude
-- Use the feedback loop: Claude designs → Gemini validates → Claude refines
-
-### Real-World Example Flow
-```
-1. You: "Create a microservices architecture for our e-commerce platform"
-2. Claude: [Designs comprehensive architecture with service boundaries, APIs, data flow]
-3. You: "Take my complete architecture design and have Gemini analyze it for:
-   - Potential bottlenecks
-   - Missing error handling
-   - Security vulnerabilities
-   - Scalability concerns"
-4. Gemini: [Provides detailed analysis with specific concerns]
-5. You: "Based on Gemini's analysis, update the architecture"
-6. Claude: [Refines design addressing all concerns]
-```
-
-## Notes
-
-- Gemini 2.5 Pro Preview may occasionally block certain prompts due to safety filters
-- If a prompt is blocked by Google's safety filters, the server will return a clear error message to Claude explaining why the request could not be completed
-- Token estimation: ~4 characters per token
-- All file paths should be absolute paths
-
-## Troubleshooting
-
-### Server Not Appearing in Claude
-
-- **Check JSON validity:** Ensure your `claude_desktop_config.json` file is valid JSON (no trailing commas, proper quotes)
-- **Verify absolute paths:** The `command` path must be an absolute path to `run_gemini.sh` or `run_gemini.bat`
-- **Restart Claude Desktop:** Always restart Claude Desktop completely after any configuration change
-
-### Gemini Commands Fail
-
-- **"API Key not valid" errors:** Verify your `GEMINI_API_KEY` is correct and active in [Google AI Studio](https://aistudio.google.com/app/apikey)
-- **"Permission denied" errors:** 
-  - Ensure your API key is enabled for the `gemini-2.5-pro-preview` model
-  - On macOS/Linux, check that `run_gemini.sh` has execute permissions (`chmod +x run_gemini.sh`)
-- **Network errors:** If behind a corporate firewall, ensure requests to `https://generativelanguage.googleapis.com` are allowed
-
-### Common Setup Issues
-
-- **"Module not found" errors:** The virtual environment may not be activated. See the Installation section
-- **`chmod: command not found` (Windows):** The `chmod +x` command is for macOS/Linux only. Windows users can skip this step
-- **Path not found errors:** Use absolute paths in all configurations, not relative paths like `./run_gemini.sh`
-
-## Testing
-
-### Running Tests Locally
-
-```bash
-# Install development dependencies
-pip install -r requirements.txt
-
-# Run tests with coverage
-pytest
-
-# Run tests with verbose output
-pytest -v
-
-# Run specific test file
-pytest tests/test_gemini_server.py
-
-# Generate HTML coverage report
-pytest --cov-report=html
-open htmlcov/index.html  # View coverage report
-```
-
-### Continuous Integration
-
-This project uses GitHub Actions for automated testing:
-- Tests run on every push and pull request
-- Supports Python 3.8 - 3.12
-- Tests on Ubuntu, macOS, and Windows
-- Includes linting with flake8, black, isort, and mypy
-- Maintains 80%+ code coverage
-
-## Contributing
-
-This server is designed specifically for Claude Code users. Contributions that enhance the developer experience are welcome!
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Write tests for your changes
-4. Ensure all tests pass (`pytest`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-## License
-
-MIT License - feel free to customize for your development workflow.
+Built with [MCP](https://modelcontextprotocol.com) by Anthropic and powered by Google's Gemini API.
