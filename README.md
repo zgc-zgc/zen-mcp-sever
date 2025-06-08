@@ -171,6 +171,59 @@ You: "Use Gemini to analyze all files in /src/core/ and create an architecture d
 You: "Have Gemini profile this codebase and suggest the top 5 performance improvements"
 ```
 
+## 💡 Practical Usage Tips
+
+### Effective Commands
+Be specific about what you want from Gemini:
+- ✅ "Ask Gemini to identify memory leaks in this code"
+- ❌ "Ask Gemini about this"
+
+### Common Workflows
+
+#### 1. **Extended Code Review**
+```
+You: "Implement feature X"
+Claude: [implements]
+You: "Use Gemini to review this implementation for scalability issues"
+Gemini: [provides detailed feedback]
+You: "Based on Gemini's feedback, improve the implementation"
+Claude: [refines based on feedback]
+```
+
+#### 2. **Large File Analysis**
+```
+"Use Gemini to analyze /path/to/large/file.py and summarize its architecture"
+"Have Gemini trace all function calls in this module"
+"Ask Gemini to identify unused code in this file"
+```
+
+#### 3. **Multi-File Context**
+```
+"Use Gemini to analyze how auth.py, users.py, and permissions.py work together"
+"Have Gemini map the data flow between these components"
+"Ask Gemini to find all circular dependencies in /src"
+```
+
+#### 4. **Second Opinion & Validation**
+```
+"I'm planning to refactor using pattern X. Ask Gemini for potential issues"
+"Use Gemini to validate my database schema design"
+"Have Gemini suggest alternative approaches to this algorithm"
+```
+
+#### 5. **Security & Performance Audits**
+```
+"Use Gemini to security audit this authentication flow"
+"Have Gemini identify performance bottlenecks in this codebase"
+"Ask Gemini to check for common security vulnerabilities"
+```
+
+### Best Practices
+- Use Gemini when you need analysis beyond Claude's context window
+- Leverage Gemini's 1M token limit for whole-codebase analysis
+- Combine both assistants: Claude for implementation, Gemini for review
+- Be specific in your requests for more accurate responses
+
 ## 📝 Notes
 
 - Gemini 2.5 Pro Preview may occasionally block certain prompts due to safety filters
