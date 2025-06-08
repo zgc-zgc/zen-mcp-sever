@@ -15,7 +15,7 @@ This server acts as a developer assistant that augments Claude Code when you nee
 
 Before you begin, ensure you have the following:
 
-1. **Python:** Python 3.8 or newer. Check your version with `python3 --version`
+1. **Python:** Python 3.10 or newer. Check your version with `python3 --version`
 2. **Claude Desktop:** A working installation of Claude Desktop and the `claude` command-line tool
 3. **Gemini API Key:** An active API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
    - Ensure your key is enabled for the `gemini-2.5-pro-preview` model

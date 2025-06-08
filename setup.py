@@ -18,13 +18,12 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Fahad Gilani",
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     py_modules=["gemini_server"],
     install_requires=[
         "mcp>=1.0.0",
         "google-generativeai>=0.8.0",
         "python-dotenv>=1.0.0",
-        "typing-extensions>=4.0.0;python_version<'3.10'",
     ],
     extras_require={
         "dev": [
@@ -43,8 +42,6 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
