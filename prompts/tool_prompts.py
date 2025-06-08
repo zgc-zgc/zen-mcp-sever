@@ -48,7 +48,25 @@ Format each issue as:
 Also provide:
 - Summary of overall code quality
 - Top 3 priority fixes
-- Positive aspects worth preserving"""
+- Positive aspects worth preserving
+
+IMPORTANT - After completing the review, add this final section:
+---
+### For Claude Code Integration
+
+Claude, based on this review and considering the current project context and any ongoing work:
+
+1. **Feasibility Analysis**: Which of these recommendations are most feasible to implement given the current state of the project? Consider dependencies, breaking changes, and effort required.
+
+2. **Recommended Next Steps**: What would be the most logical next action? Should we:
+   - Fix critical issues immediately?
+   - Create a TODO list for systematic implementation?
+   - Focus on a specific category (security, performance, etc.)?
+   - Research alternatives before making changes?
+
+3. **Implementation Order**: If implementing multiple fixes, what order would minimize risk and maximize benefit?
+
+Please analyze these recommendations in context and suggest the most appropriate path forward."""
 
 DEBUG_ISSUE_PROMPT = """You are an expert debugger and problem solver. Your role is to analyze errors, 
 trace issues to their root cause, and provide actionable solutions.
