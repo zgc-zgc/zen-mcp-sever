@@ -114,6 +114,9 @@ Just talk to Claude naturally:
 - "Ask Gemini to review the architecture of these files..."
 - "Have Gemini check this codebase for security issues..."
 
+**Pro tip:** For clean terminal output when analyzing files, mention "files parameter" in your prompt:
+- "Use gemini analyze_code with files=['config.py'] to review the configuration"
+
 ## How It Works
 
 This server acts as a local proxy between Claude Code and the Google Gemini API, following the Model Context Protocol (MCP):
@@ -167,7 +170,21 @@ Specialized tool for analyzing large files or multiple files that exceed Claude'
 "Have Gemini review these files together: auth.py, users.py, permissions.py"
 ```
 
-**Note on Terminal Output:** When using direct code input, the MCP client displays the full content in the terminal. For better readability with large content, save it to a file first and provide the file path instead.
+**Important - Avoiding Terminal Clutter:**
+When analyzing files, be explicit about using the files parameter to prevent Claude from showing the entire file content in the terminal:
+
+✅ **Good prompts** (clean terminal output):
+- "Use gemini analyze_code with files=['README.md'] to check for issues"
+- "Ask gemini to analyze main.py using the files parameter"
+- "Use gemini to analyze README.md - use the files parameter with the path"
+- "Call gemini analyze_code passing config.json in the files parameter"
+
+❌ **Avoid these** (will show entire file in terminal):
+- "Get gemini's feedback on this README file"
+- "Can you analyze this file with gemini?"
+- "Ask gemini about the code in main.py"
+
+The server reads files directly when you use the files parameter, keeping your terminal clean while still sending the full content to Gemini.
 
 ### `list_models`
 Lists available Gemini models (defaults to 2.5 Pro Preview).
@@ -243,6 +260,12 @@ You: "Have Gemini profile this codebase and suggest the top 5 performance improv
 Be specific about what you want from Gemini:
 - Good: "Ask Gemini to identify memory leaks in this code"
 - Bad: "Ask Gemini about this"
+
+### Clean Terminal Output
+When analyzing files, explicitly mention the files parameter:
+- "Use gemini analyze_code with files=['app.py'] to find bugs"
+- "Analyze package.json using gemini's files parameter"
+This prevents Claude from displaying the entire file content in your terminal.
 
 ### Common Workflows
 
