@@ -11,6 +11,16 @@ This server acts as a developer assistant that augments Claude Code when you nee
 - Performance analysis of large codebases
 - Security audits requiring full codebase context
 
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following:
+
+1. **Python:** Python 3.8 or newer. Check your version with `python3 --version`
+2. **Claude Desktop:** A working installation of Claude Desktop and the `claude` command-line tool
+3. **Gemini API Key:** An active API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Ensure your key is enabled for the `gemini-2.5-pro-preview` model
+4. **Git:** The `git` command-line tool for cloning the repository
+
 ## 🚀 Quick Start for Claude Code
 
 ### 1. Clone the Repository
@@ -19,6 +29,9 @@ First, clone this repository to your local machine:
 ```bash
 git clone https://github.com/BeehiveInnovations/gemini-mcp-server.git
 cd gemini-mcp-server
+
+# macOS/Linux only: Make the script executable
+chmod +x run_gemini.sh
 ```
 
 Note the full path to this directory - you'll need it for the configuration.
@@ -30,6 +43,7 @@ You can access the configuration file in two ways:
 - **Direct file access**: 
   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+  - **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 Add the following configuration, replacing the path with your actual directory path:
 
@@ -61,7 +75,24 @@ Add the following configuration, replacing the path with your actual directory p
 }
 ```
 
-**Important**: Replace `/path/to/gemini-mcp-server` with the actual path where you cloned the repository.
+**Linux**:
+```json
+{
+  "mcpServers": {
+    "gemini": {
+      "command": "/path/to/gemini-mcp-server/run_gemini.sh",
+      "env": {
+        "GEMINI_API_KEY": "your-gemini-api-key-here"
+      }
+    }
+  }
+}
+```
+
+**Important**: Replace the path with the actual absolute path where you cloned the repository:
+- **macOS example**: `/Users/yourname/projects/gemini-mcp-server/run_gemini.sh`
+- **Windows example**: `C:\\Users\\yourname\\projects\\gemini-mcp-server\\run_gemini.bat`
+- **Linux example**: `/home/yourname/projects/gemini-mcp-server/run_gemini.sh`
 
 ### 3. Restart Claude Desktop
 
@@ -71,6 +102,8 @@ After adding the configuration, restart Claude Desktop. You'll see "gemini" in t
 
 To make the server available in Claude Code, run:
 ```bash
+# This command reads your Claude Desktop configuration and makes
+# the "gemini" server available in your terminal
 claude mcp add-from-claude-desktop -s user
 ```
 
@@ -80,6 +113,19 @@ Just talk to Claude naturally:
 - "Use Gemini to analyze this large file..."
 - "Ask Gemini to review the architecture of these files..."
 - "Have Gemini check this codebase for security issues..."
+
+## 🔍 How It Works
+
+This server acts as a local proxy between Claude Code and the Google Gemini API, following the Model Context Protocol (MCP):
+
+1. You issue a command to Claude (e.g., "Ask Gemini to...")
+2. Claude Code sends a request to the local MCP server defined in your configuration
+3. This server receives the request, formats it for the Gemini API, and includes any file contents
+4. The request is sent to the Google Gemini API using your API key
+5. The server receives the response from Gemini
+6. The response is formatted and streamed back to Claude, who presents it to you
+
+All processing and API communication happens locally from your machine. Your API key is never exposed to Anthropic.
 
 ## 💻 Developer-Optimized Features
 
@@ -265,9 +311,31 @@ You: "Have Gemini review my approach and check these 10 files for compatibility 
 ## 📝 Notes
 
 - Gemini 2.5 Pro Preview may occasionally block certain prompts due to safety filters
-- The server automatically falls back gracefully when this happens
+- If a prompt is blocked by Google's safety filters, the server will return a clear error message to Claude explaining why the request could not be completed
 - Token estimation: ~4 characters per token
 - All file paths should be absolute paths
+
+## 🔧 Troubleshooting
+
+### Server Not Appearing in Claude
+
+- **Check JSON validity:** Ensure your `claude_desktop_config.json` file is valid JSON (no trailing commas, proper quotes)
+- **Verify absolute paths:** The `command` path must be an absolute path to `run_gemini.sh` or `run_gemini.bat`
+- **Restart Claude Desktop:** Always restart Claude Desktop completely after any configuration change
+
+### Gemini Commands Fail
+
+- **"API Key not valid" errors:** Verify your `GEMINI_API_KEY` is correct and active in [Google AI Studio](https://aistudio.google.com/app/apikey)
+- **"Permission denied" errors:** 
+  - Ensure your API key is enabled for the `gemini-2.5-pro-preview` model
+  - On macOS/Linux, check that `run_gemini.sh` has execute permissions (`chmod +x run_gemini.sh`)
+- **Network errors:** If behind a corporate firewall, ensure requests to `https://generativelanguage.googleapis.com` are allowed
+
+### Common Setup Issues
+
+- **"Module not found" errors:** The virtual environment may not be activated. See the Installation section
+- **`chmod: command not found` (Windows):** The `chmod +x` command is for macOS/Linux only. Windows users can skip this step
+- **Path not found errors:** Use absolute paths in all configurations, not relative paths like `./run_gemini.sh`
 
 ## 🧪 Testing
 
