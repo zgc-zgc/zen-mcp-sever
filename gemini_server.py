@@ -109,25 +109,31 @@ def configure_gemini():
 
 
 def read_file_content(file_path: str) -> str:
-    """Read content from a file with error handling"""
+    """Read content from a file with error handling - for backward compatibility"""
+    return read_file_content_for_gemini(file_path)
+
+
+def read_file_content_for_gemini(file_path: str) -> str:
+    """Read content from a file with proper formatting for Gemini"""
     try:
         path = Path(file_path)
         if not path.exists():
-            return f"Error: File not found: {file_path}"
+            return f"\n--- FILE NOT FOUND: {file_path} ---\nError: File does not exist\n--- END FILE ---\n"
         if not path.is_file():
-            return f"Error: Not a file: {file_path}"
+            return f"\n--- NOT A FILE: {file_path} ---\nError: Path is not a file\n--- END FILE ---\n"
 
         # Read the file
         with open(path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        return f"=== File: {file_path} ===\n{content}\n"
+        # Format with clear delimiters for Gemini
+        return f"\n--- BEGIN FILE: {file_path} ---\n{content}\n--- END FILE: {file_path} ---\n"
     except Exception as e:
-        return f"Error reading {file_path}: {str(e)}"
+        return f"\n--- ERROR READING FILE: {file_path} ---\nError: {str(e)}\n--- END FILE ---\n"
 
 
 def prepare_code_context(
-    files: Optional[List[str]], code: Optional[str], verbose: bool = False
+    files: Optional[List[str]], code: Optional[str]
 ) -> Tuple[str, str]:
     """Prepare code context from files and/or direct code
     Returns: (context_for_gemini, summary_for_terminal)
@@ -137,26 +143,45 @@ def prepare_code_context(
 
     # Add file contents
     if files:
-        summary_parts.append(f"Analyzing {len(files)} file(s):")
+        summary_parts.append(f"📁 Analyzing {len(files)} file(s):")
         for file_path in files:
-            content = read_file_content(file_path)
-            context_parts.append(content)
+            # Get file content for Gemini
+            file_content = read_file_content_for_gemini(file_path)
+            context_parts.append(file_content)
 
-            # For summary, just show file path and size
+            # Create summary with small excerpt for terminal
             path = Path(file_path)
             if path.exists() and path.is_file():
                 size = path.stat().st_size
-                summary_parts.append(f"  - {file_path} ({size:,} bytes)")
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        # Read first few lines for preview
+                        preview_lines = []
+                        for i, line in enumerate(f):
+                            if i >= 3:  # Show max 3 lines
+                                break
+                            preview_lines.append(line.rstrip())
+                        preview = "\n".join(preview_lines)
+                        if len(preview) > 100:
+                            preview = preview[:100] + "..."
+                        summary_parts.append(f"  📄 {file_path} ({size:,} bytes)")
+                        if preview.strip():
+                            summary_parts.append(f"     Preview: {preview[:50]}...")
+                except Exception:
+                    summary_parts.append(f"  📄 {file_path} ({size:,} bytes)")
             else:
-                summary_parts.append(f"  - {file_path} (not found)")
+                summary_parts.append(f"  ❌ {file_path} (not found)")
 
     # Add direct code
     if code:
-        context_parts.append("=== Direct Code ===\n" + code + "\n")
-        summary_parts.append(f"Direct code provided ({len(code):,} characters)")
+        formatted_code = f"\n--- BEGIN DIRECT CODE ---\n{code}\n--- END DIRECT CODE ---\n"
+        context_parts.append(formatted_code)
+        preview = code[:100] + "..." if len(code) > 100 else code
+        summary_parts.append(f"💻 Direct code provided ({len(code):,} characters)")
+        summary_parts.append(f"     Preview: {preview}")
 
-    full_context = "\n".join(context_parts)
-    summary = "\n".join(summary_parts) if not verbose else full_context
+    full_context = "\n\n".join(context_parts)
+    summary = "\n".join(summary_parts)
 
     return full_context, summary
 
@@ -241,11 +266,6 @@ async def handle_list_tools() -> List[Tool]:
                         "description": f"Model to use (defaults to {DEFAULT_MODEL})",
                         "default": DEFAULT_MODEL,
                     },
-                    "verbose_output": {
-                        "type": "boolean",
-                        "description": "Show file contents in terminal output",
-                        "default": False,
-                    },
                 },
                 "required": ["question"],
             },
@@ -320,9 +340,9 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
             ]
 
         try:
-            # Prepare code context
+            # Prepare code context - always use non-verbose mode for Claude Code compatibility
             code_context, summary = prepare_code_context(
-                request.files, request.code, request.verbose_output
+                request.files, request.code
             )
 
             # Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
@@ -346,12 +366,19 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 },
             )
 
-            # Prepare the full prompt with enhanced developer context
+            # Prepare the full prompt with enhanced developer context and clear structure
             system_prompt = request.system_prompt or DEVELOPER_SYSTEM_PROMPT
-            full_prompt = (
-                f"{system_prompt}\n\nCode to analyze:\n\n{code_context}\n\n"
-                f"Question/Request: {request.question}"
-            )
+            full_prompt = f"""{system_prompt}
+
+=== USER REQUEST ===
+{request.question}
+=== END USER REQUEST ===
+
+=== CODE TO ANALYZE ===
+{code_context}
+=== END CODE TO ANALYZE ===
+
+Please analyze the code above and respond to the user's request. The code files are clearly marked with their paths and content boundaries."""
 
             # Generate response
             response = model.generate_content(full_prompt)
@@ -367,9 +394,9 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 )
                 text = f"Response blocked or incomplete. Finish reason: {finish_reason}"
 
-            # Return response with summary if not verbose
-            if not request.verbose_output and request.files:
-                response_text = f"{summary}\n\nGemini's response:\n{text}"
+            # Always return response with summary for Claude Code compatibility
+            if request.files or request.code:
+                response_text = f"{summary}\n\n🤖 Gemini's Analysis:\n{text}"
             else:
                 response_text = text
 
