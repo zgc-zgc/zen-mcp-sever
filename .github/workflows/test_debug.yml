@@ -1,0 +1,60 @@
+name: Debug Test Failures
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  debug-python38:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.8'
+    
+    - name: Show Python version
+      run: |
+        python --version
+        python -c "import sys; print(sys.version_info)"
+    
+    - name: Install basic dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip --version
+    
+    - name: Try installing MCP
+      continue-on-error: true
+      run: |
+        pip install "mcp>=1.0.0" -v
+    
+    - name: Try installing google-generativeai
+      continue-on-error: true
+      run: |
+        pip install "google-generativeai>=0.8.0" -v
+    
+    - name: Install all dependencies
+      continue-on-error: true
+      run: |
+        pip install -e . -v
+        pip install -r requirements.txt -v
+    
+    - name: Show installed packages
+      run: |
+        pip list
+    
+    - name: Try importing modules
+      continue-on-error: true
+      run: |
+        python -c "import mcp" && echo "✓ mcp imported successfully" || echo "✗ Failed to import mcp"
+        python -c "import google.generativeai" && echo "✓ google.generativeai imported successfully" || echo "✗ Failed to import google.generativeai"
+        python -c "import gemini_server" && echo "✓ gemini_server imported successfully" || echo "✗ Failed to import gemini_server"
+    
+    - name: Run a simple test
+      continue-on-error: true
+      run: |
+        python -m pytest tests/test_imports.py -v

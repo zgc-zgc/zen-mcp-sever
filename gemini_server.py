@@ -7,6 +7,7 @@ Enhanced for large-scale code analysis with 1M token context window
 import asyncio
 import json
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -445,13 +446,14 @@ marked with their paths and content boundaries."""
             "author": __author__,
             "default_model": DEFAULT_MODEL,
             "max_context_tokens": f"{MAX_CONTEXT_TOKENS:,}",
-            "python_version": f"{os.sys.version_info.major}.{os.sys.version_info.minor}.{os.sys.version_info.micro}",
+            "python_version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
             "server_started": datetime.now().isoformat(),
         }
-        
-        return [TextContent(
-            type="text",
-            text=f"""🤖 Gemini MCP Server v{__version__}
+
+        return [
+            TextContent(
+                type="text",
+                text=f"""🤖 Gemini MCP Server v{__version__}
 Updated: {__updated__}
 Author: {__author__}
 
@@ -461,8 +463,9 @@ Configuration:
 • Python: {version_info['python_version']}
 • Started: {version_info['server_started']}
 
-For updates, visit: https://github.com/BeehiveInnovations/gemini-mcp-server"""
-        )]
+For updates, visit: https://github.com/BeehiveInnovations/gemini-mcp-server""",
+            )
+        ]
 
     else:
         return [TextContent(type="text", text=f"Unknown tool: {name}")]
