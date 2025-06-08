@@ -16,7 +16,7 @@ This server makes Gemini your development sidekick, handling what Claude can't o
 ## Quickstart (5 minutes)
 
 ### 1. Get a Gemini API Key
-Visit [Google AI Studio](https://makersuite.google.com/app/apikey) and generate a free API key.
+Visit [Google AI Studio](https://makersuite.google.com/app/apikey) and generate an API key. For best results with Gemini 2.5 Pro, use a paid API key as the free tier has limited access to the latest models.
 
 ### 2. Install via Claude Desktop Config
 
