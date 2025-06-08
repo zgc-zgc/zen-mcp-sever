@@ -59,15 +59,15 @@ Just ask Claude naturally:
 ## Available Tools
 
 **Quick Overview:**
-1. [`think_deeper`](#think_deeper---extended-reasoning-partner) - Extended reasoning and problem-solving
-2. [`review_code`](#review_code---professional-code-review) - Professional code review with severity levels
-3. [`debug_issue`](#debug_issue---expert-debugging-assistant) - Root cause analysis and debugging
-4. [`analyze`](#analyze---smart-file-analysis) - General-purpose file and code analysis
-5. [`chat`](#chat---general-development-chat) - General development conversations
-6. [`list_models`](#list_models---see-available-gemini-models) - List available Gemini models
-7. [`get_version`](#get_version---server-information) - Get server version and configuration
+1. [`think_deeper`](#1-think_deeper---extended-reasoning-partner) - Extended reasoning and problem-solving
+2. [`review_code`](#2-review_code---professional-code-review) - Professional code review with severity levels
+3. [`debug_issue`](#3-debug_issue---expert-debugging-assistant) - Root cause analysis and debugging
+4. [`analyze`](#4-analyze---smart-file-analysis) - General-purpose file and code analysis
+5. [`chat`](#5-chat---general-development-chat) - General development conversations
+6. [`list_models`](#6-list_models---see-available-gemini-models) - List available Gemini models
+7. [`get_version`](#7-get_version---server-information) - Get server version and configuration
 
-### `think_deeper` - Extended Reasoning Partner
+### 1. `think_deeper` - Extended Reasoning Partner
 **When Claude needs to go deeper on complex problems**
 
 #### Example Prompts:
@@ -97,7 +97,7 @@ Just ask Claude naturally:
 
 **Triggers:** think deeper, ultrathink, extend my analysis, explore alternatives, validate my approach
 
-### `review_code` - Professional Code Review  
+### 2. `review_code` - Professional Code Review  
 **Comprehensive code analysis with prioritized feedback**
 
 #### Example Prompts:
@@ -135,7 +135,7 @@ Just ask Claude naturally:
 
 **Triggers:** review code, check for issues, find bugs, security check, code audit
 
-### `debug_issue` - Expert Debugging Assistant
+### 3. `debug_issue` - Expert Debugging Assistant
 **Root cause analysis for complex problems**
 
 #### Example Prompts:
@@ -165,7 +165,7 @@ Just ask Claude naturally:
 
 **Triggers:** debug, error, failing, root cause, trace, not working, why is
 
-### `analyze` - Smart File Analysis
+### 4. `analyze` - Smart File Analysis
 **General-purpose code understanding and exploration**
 
 #### Example Prompts:
@@ -200,7 +200,7 @@ Just ask Claude naturally:
 
 **Triggers:** analyze, examine, look at, understand, inspect, check
 
-### `chat` - General Development Chat
+### 5. `chat` - General Development Chat
 **For everything else**
 
 #### Example Prompts:
@@ -213,13 +213,13 @@ Just ask Claude naturally:
 "Best practices for handling timezone data in Python"
 ```
 
-### `list_models` - See Available Gemini Models
+### 6. `list_models` - See Available Gemini Models
 ```
 "List available Gemini models"
 "Show me what models I can use"
 ```
 
-### `get_version` - Server Information
+### 7. `get_version` - Server Information
 ```
 "Get Gemini server version"
 "Show server configuration"
