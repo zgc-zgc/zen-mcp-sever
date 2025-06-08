@@ -64,6 +64,7 @@ class CodeAnalysisRequest(BaseModel):
     max_tokens: Optional[int] = Field(8192, description="Maximum number of tokens in response")
     temperature: Optional[float] = Field(0.2, description="Temperature for code analysis (0-1, default 0.2 for high accuracy)")
     model: Optional[str] = Field(DEFAULT_MODEL, description=f"Model to use (defaults to {DEFAULT_MODEL})")
+    verbose_output: Optional[bool] = Field(False, description="Show file contents in terminal output")
 
 
 # Create the MCP server instance
@@ -97,20 +98,37 @@ def read_file_content(file_path: str) -> str:
         return f"Error reading {file_path}: {str(e)}"
 
 
-def prepare_code_context(files: Optional[List[str]], code: Optional[str]) -> str:
-    """Prepare code context from files and/or direct code"""
+def prepare_code_context(files: Optional[List[str]], code: Optional[str], verbose: bool = False) -> tuple[str, str]:
+    """Prepare code context from files and/or direct code
+    Returns: (context_for_gemini, summary_for_terminal)
+    """
     context_parts = []
+    summary_parts = []
     
     # Add file contents
     if files:
+        summary_parts.append(f"Analyzing {len(files)} file(s):")
         for file_path in files:
-            context_parts.append(read_file_content(file_path))
+            content = read_file_content(file_path)
+            context_parts.append(content)
+            
+            # For summary, just show file path and size
+            path = Path(file_path)
+            if path.exists() and path.is_file():
+                size = path.stat().st_size
+                summary_parts.append(f"  - {file_path} ({size:,} bytes)")
+            else:
+                summary_parts.append(f"  - {file_path} (not found)")
     
     # Add direct code
     if code:
         context_parts.append("=== Direct Code ===\n" + code + "\n")
+        summary_parts.append(f"Direct code provided ({len(code):,} characters)")
     
-    return "\n".join(context_parts)
+    full_context = "\n".join(context_parts)
+    summary = "\n".join(summary_parts) if not verbose else full_context
+    
+    return full_context, summary
 
 
 @server.list_tools()
@@ -268,7 +286,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
         
         try:
             # Prepare code context
-            code_context = prepare_code_context(request.files, request.code)
+            code_context, summary = prepare_code_context(request.files, request.code, request.verbose_output)
             
             # Count approximate tokens (rough estimate: 1 token ≈ 4 characters)
             estimated_tokens = len(code_context) // 4
@@ -302,9 +320,15 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[TextCon
                 finish_reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
                 text = f"Response blocked or incomplete. Finish reason: {finish_reason}"
             
+            # Return response with summary if not verbose
+            if not request.verbose_output and request.files:
+                response_text = f"{summary}\n\nGemini's response:\n{text}"
+            else:
+                response_text = text
+                
             return [TextContent(
                 type="text",
-                text=text
+                text=response_text
             )]
             
         except Exception as e:

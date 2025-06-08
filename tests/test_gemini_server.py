@@ -61,6 +61,7 @@ class TestModels:
         assert request.max_tokens == 8192
         assert request.temperature == 0.2
         assert request.model == DEFAULT_MODEL
+        assert request.verbose_output == False
 
 
 class TestFileOperations:
@@ -97,18 +98,21 @@ class TestFileOperations:
         file2 = tmp_path / "file2.py"
         file2.write_text("print('file2')", encoding='utf-8')
         
-        context = prepare_code_context([str(file1), str(file2)], None)
+        context, summary = prepare_code_context([str(file1), str(file2)], None)
         assert "file1.py" in context
         assert "file2.py" in context
         assert "print('file1')" in context
         assert "print('file2')" in context
+        assert "Analyzing 2 file(s)" in summary
+        assert "bytes)" in summary
     
     def test_prepare_code_context_with_code(self):
         """Test preparing context from direct code"""
         code = "def test():\n    pass"
-        context = prepare_code_context(None, code)
+        context, summary = prepare_code_context(None, code)
         assert "=== Direct Code ===" in context
         assert code in context
+        assert "Direct code provided" in summary
     
     def test_prepare_code_context_mixed(self, tmp_path):
         """Test preparing context from both files and code"""
@@ -116,9 +120,11 @@ class TestFileOperations:
         test_file.write_text("# From file", encoding='utf-8')
         code = "# Direct code"
         
-        context = prepare_code_context([str(test_file)], code)
+        context, summary = prepare_code_context([str(test_file)], code)
         assert "# From file" in context
         assert "# Direct code" in context
+        assert "Analyzing 1 file(s)" in summary
+        assert "Direct code provided" in summary
 
 
 class TestToolHandlers:
@@ -219,7 +225,11 @@ class TestToolHandlers:
         })
         
         assert len(result) == 1
-        assert result[0].text == "Analysis result"
+        # Check that the response contains both summary and Gemini's response
+        response_text = result[0].text
+        assert "Analyzing 1 file(s)" in response_text
+        assert "Gemini's response:" in response_text
+        assert "Analysis result" in response_text
     
     @pytest.mark.asyncio
     @patch('google.generativeai.list_models')
