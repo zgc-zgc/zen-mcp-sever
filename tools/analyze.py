@@ -16,7 +16,7 @@ from .base import BaseTool, ToolRequest
 class AnalyzeRequest(ToolRequest):
     """Request model for analyze tool"""
 
-    files: List[str] = Field(..., description="Files to analyze")
+    files: List[str] = Field(..., description="Files or directories to analyze")
     question: str = Field(..., description="What to analyze or look for")
     analysis_type: Optional[str] = Field(
         None,
@@ -36,6 +36,7 @@ class AnalyzeTool(BaseTool):
     def get_description(self) -> str:
         return (
             "ANALYZE FILES & CODE - General-purpose analysis for understanding code. "
+            "Supports both individual files and entire directories. "
             "Use this for examining files, understanding architecture, or investigating specific aspects. "
             "Triggers: 'analyze these files', 'examine this code', 'understand this'. "
             "Perfect for: codebase exploration, dependency analysis, pattern detection. "
@@ -49,7 +50,7 @@ class AnalyzeTool(BaseTool):
                 "files": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Files to analyze",
+                    "description": "Files or directories to analyze",
                 },
                 "question": {
                     "type": "string",

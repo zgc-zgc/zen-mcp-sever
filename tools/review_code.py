@@ -16,7 +16,7 @@ from .base import BaseTool, ToolRequest
 class ReviewCodeRequest(ToolRequest):
     """Request model for review_code tool"""
 
-    files: List[str] = Field(..., description="Code files to review")
+    files: List[str] = Field(..., description="Code files or directories to review")
     review_type: str = Field(
         "full", description="Type of review: full|security|performance|quick"
     )
@@ -41,6 +41,7 @@ class ReviewCodeTool(BaseTool):
     def get_description(self) -> str:
         return (
             "PROFESSIONAL CODE REVIEW - Comprehensive analysis for bugs, security, and quality. "
+            "Supports both individual files and entire directories/projects. "
             "Use this for thorough code review with actionable feedback. "
             "Triggers: 'review this code', 'check for issues', 'find bugs', 'security audit'. "
             "I'll identify issues by severity (Critical→High→Medium→Low) with specific fixes. "
@@ -54,7 +55,7 @@ class ReviewCodeTool(BaseTool):
                 "files": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Code files to review",
+                    "description": "Code files or directories to review",
                 },
                 "review_type": {
                     "type": "string",

@@ -23,7 +23,7 @@ class DebugIssueRequest(ToolRequest):
         None, description="Stack trace, logs, or additional error context"
     )
     relevant_files: Optional[List[str]] = Field(
-        None, description="Files that might be related to the issue"
+        None, description="Files or directories that might be related to the issue"
     )
     runtime_info: Optional[str] = Field(
         None, description="Environment, versions, or runtime information"

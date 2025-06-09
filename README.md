@@ -257,6 +257,68 @@ Just ask Claude naturally:
 "Get gemini to show server configuration"
 ```
 
+## Tool Parameters
+
+All tools that work with files now support **both individual files and entire directories**. The server automatically expands directories, filters for relevant code files, and manages token limits.
+
+### File-Processing Tools
+
+**`analyze`** - Analyze files or directories
+- `files`: List of file paths or directories (required)
+- `question`: What to analyze (required)
+- `analysis_type`: architecture|performance|security|quality|general
+- `output_format`: summary|detailed|actionable
+
+```
+"Use gemini to analyze the src/ directory for architectural patterns"
+"Get gemini to analyze main.py and tests/ to understand test coverage"
+```
+
+**`review_code`** - Review code files or directories
+- `files`: List of file paths or directories (required)
+- `review_type`: full|security|performance|quick
+- `focus_on`: Specific aspects to focus on
+- `standards`: Coding standards to enforce
+- `severity_filter`: critical|high|medium|all
+
+```
+"Use gemini to review the entire api/ directory for security issues"
+"Get gemini to review src/ with focus on performance, only show critical issues"
+```
+
+**`debug_issue`** - Debug with file context
+- `error_description`: Description of the issue (required)
+- `error_context`: Stack trace or logs
+- `relevant_files`: Files or directories related to the issue
+- `runtime_info`: Environment details
+- `previous_attempts`: What you've tried
+
+```
+"Use gemini to debug this error with context from the entire backend/ directory"
+```
+
+**`think_deeper`** - Extended analysis with file context
+- `current_analysis`: Your current thinking (required)
+- `problem_context`: Additional context
+- `focus_areas`: Specific aspects to focus on
+- `reference_files`: Files or directories for context
+
+```
+"Use gemini to think deeper about my design with reference to the src/models/ directory"
+```
+
+### Directory Support Features
+
+- **Automatic Expansion**: Directories are recursively scanned for code files
+- **Smart Filtering**: Hidden files, caches, and non-code files are automatically excluded
+- **Token Management**: Loads as many files as possible within token limits
+- **Clear Markers**: Each file is marked with full path for Gemini to distinguish
+
+Example with mixed paths:
+```
+"Use gemini to analyze config.py, src/, and tests/unit/ to understand the testing strategy"
+```
+
 ## Collaborative Workflows
 
 ### Design → Review → Implement

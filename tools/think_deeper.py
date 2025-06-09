@@ -27,7 +27,7 @@ class ThinkDeeperRequest(ToolRequest):
         description="Specific aspects to focus on (architecture, performance, security, etc.)",
     )
     reference_files: Optional[List[str]] = Field(
-        None, description="Optional file paths for additional context"
+        None, description="Optional file paths or directories for additional context"
     )
 
 
