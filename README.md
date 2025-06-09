@@ -259,7 +259,7 @@ Just ask Claude naturally:
 
 ## Tool Parameters
 
-All tools that work with files now support **both individual files and entire directories**. The server automatically expands directories, filters for relevant code files, and manages token limits.
+All tools that work with files support **both individual files and entire directories**. The server automatically expands directories, filters for relevant code files, and manages token limits.
 
 ### File-Processing Tools
 
