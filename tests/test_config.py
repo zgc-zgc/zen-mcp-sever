@@ -13,9 +13,9 @@ class TestConfig:
 
     def test_version_info(self):
         """Test version information"""
-        assert __version__ == "2.4.0"
+        assert __version__ == "2.4.1"
         assert __author__ == "Fahad Gilani"
-        assert __updated__ == "2025-06-08"
+        assert __updated__ == "2025-06-09"
 
     def test_model_config(self):
         """Test model configuration"""
