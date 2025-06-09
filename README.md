@@ -1,6 +1,6 @@
 # Gemini MCP Server for Claude Code
 
-The ultimate development partner for Claude - a Model Context Protocol server that gives Claude access to Google's Gemini 2.5 Pro for extended thinking, code analysis, and problem-solving.
+The ultimate development partner for Claude - a Model Context Protocol server that gives Claude access to Google's Gemini 2.5 Pro for extended thinking, code analysis, and problem-solving. **Automatically reads files and directories, passing their contents to Gemini for analysis within its 1M token context.**
 
 ## Why This Server?
 
@@ -13,6 +13,14 @@ Claude is brilliant, but sometimes you need:
 - **A senior developer partner** to validate and extend ideas
 
 This server makes Gemini your development sidekick, handling what Claude can't or extending what Claude starts.
+
+## File & Directory Support
+
+All tools accept both individual files and entire directories. The server:
+- **Automatically expands directories** to find all code files recursively
+- **Intelligently filters** hidden files, caches, and non-code files
+- **Handles mixed inputs** like `"analyze main.py, src/, and tests/"`
+- **Manages token limits** by loading as many files as possible within Gemini's context
 
 ## Quickstart (5 minutes)
 
@@ -305,18 +313,6 @@ All tools that work with files support **both individual files and entire direct
 
 ```
 "Use gemini to think deeper about my design with reference to the src/models/ directory"
-```
-
-### Directory Support Features
-
-- **Automatic Expansion**: Directories are recursively scanned for code files
-- **Smart Filtering**: Hidden files, caches, and non-code files are automatically excluded
-- **Token Management**: Loads as many files as possible within token limits
-- **Clear Markers**: Each file is marked with full path for Gemini to distinguish
-
-Example with mixed paths:
-```
-"Use gemini to analyze config.py, src/, and tests/unit/ to understand the testing strategy"
 ```
 
 ## Collaborative Workflows
