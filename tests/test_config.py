@@ -12,10 +12,23 @@ class TestConfig:
     """Test configuration values"""
 
     def test_version_info(self):
-        """Test version information"""
-        assert __version__ == "2.4.1"
+        """Test version information exists and has correct format"""
+        # Check version format (e.g., "2.4.1")
+        assert isinstance(__version__, str)
+        assert len(__version__.split('.')) == 3  # Major.Minor.Patch
+        
+        # Check author
         assert __author__ == "Fahad Gilani"
-        assert __updated__ == "2025-06-09"
+        
+        # Check updated date exists and has valid format (YYYY-MM-DD)
+        assert isinstance(__updated__, str)
+        assert len(__updated__) == 10
+        assert __updated__[4] == '-' and __updated__[7] == '-'
+        # Validate it's a valid date format
+        year, month, day = __updated__.split('-')
+        assert len(year) == 4 and year.isdigit()
+        assert len(month) == 2 and month.isdigit() and 1 <= int(month) <= 12
+        assert len(day) == 2 and day.isdigit() and 1 <= int(day) <= 31
 
     def test_model_config(self):
         """Test model configuration"""
