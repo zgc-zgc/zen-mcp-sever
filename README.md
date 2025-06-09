@@ -5,12 +5,12 @@ The ultimate development partner for Claude - a Model Context Protocol server th
 ## Why This Server?
 
 Claude is brilliant, but sometimes you need:
-- **A second opinion** on complex architectural decisions - augment Claude's extended thinking with Gemini's perspective
-- **Massive context window** (1M tokens) - Gemini 2.5 Pro can analyze entire codebases, read hundreds of files at once, and provide comprehensive insights
-- **Deep code analysis** across massive codebases that exceed Claude's context limits
-- **Expert debugging** for tricky issues with full system context
-- **Professional code reviews** with actionable feedback across entire repositories
-- **A senior developer partner** to validate and extend ideas
+- **A second opinion** on complex architectural decisions - augment Claude's extended thinking with Gemini's perspective (`think_deeper`)
+- **Massive context window** (1M tokens) - Gemini 2.5 Pro can analyze entire codebases, read hundreds of files at once, and provide comprehensive insights (`analyze`)
+- **Deep code analysis** across massive codebases that exceed Claude's context limits (`analyze`)
+- **Expert debugging** for tricky issues with full system context (`debug_issue`)
+- **Professional code reviews** with actionable feedback across entire repositories (`review_code`)
+- **A senior developer partner** to validate and extend ideas (`chat`)
 
 This server makes Gemini your development sidekick, handling what Claude can't or extending what Claude starts.
 
@@ -97,10 +97,13 @@ claude mcp add-from-claude-desktop -s user
 ### 6. Start Using It!
 
 Just ask Claude naturally:
-- "Use gemini to think deeper about this architecture design"
-- "Get gemini to review this code for security issues"  
-- "Get gemini to debug why this test is failing"
-- "Use gemini to analyze these files to understand the data flow"
+- "Use gemini to think deeper about this architecture design" → `think_deeper`
+- "Get gemini to review this code for security issues" → `review_code`
+- "Get gemini to debug why this test is failing" → `debug_issue`
+- "Use gemini to analyze these files to understand the data flow" → `analyze`
+- "Brainstorm with gemini about scaling strategies" → `chat`
+- "Share my implementation plan with gemini for feedback" → `chat`
+- "Get gemini's opinion on my authentication design" → `chat`
 
 ## Available Tools
 
