@@ -1,4 +1,4 @@
-# Gemini MCP Server
+# Gemini MCP Server for Claude Code
 
 The ultimate development partner for Claude - a Model Context Protocol server that gives Claude access to Google's Gemini 2.5 Pro for extended thinking, code analysis, and problem-solving.
 
