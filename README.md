@@ -262,6 +262,30 @@ Tools can reference files for additional context:
 "Get gemini to think deeper about my design, reference the current architecture.md"
 ```
 
+## Configuration
+
+The server includes several configurable properties that control its behavior:
+
+### Model Configuration
+- **`DEFAULT_MODEL`**: `"gemini-2.5-pro-preview-06-05"` - The default Gemini model used
+- **`MAX_CONTEXT_TOKENS`**: `1,000,000` - Maximum input context (1M tokens for Gemini 2.5 Pro)
+- **`MAX_OUTPUT_TOKENS`**: `32,768` - Maximum output tokens per response
+
+### Temperature Defaults
+Different tools use optimized temperature settings:
+- **`TEMPERATURE_ANALYTICAL`**: `0.2` - Used for code review and debugging (focused, deterministic)
+- **`TEMPERATURE_BALANCED`**: `0.5` - Used for general chat (balanced creativity/accuracy)
+- **`TEMPERATURE_CREATIVE`**: `0.7` - Used for deep thinking and architecture (more creative)
+
+### Customizing Output Length
+Each tool accepts an optional `max_tokens` parameter to override the default:
+```
+"Use gemini to analyze main.py with max_tokens 16000"
+"Get gemini to think deeper about this design with max_tokens 50000"
+```
+
+Note: The maximum supported output is 32,768 tokens for Gemini 2.5 Pro.
+
 ## Installation
 
 1. Clone the repository:
@@ -286,14 +310,37 @@ Tools can reference files for additional context:
    export GEMINI_API_KEY="your-api-key-here"
    ```
 
+## How System Prompts Work
+
+The server uses carefully crafted system prompts to give each tool specialized expertise:
+
+### Prompt Architecture
+- **Centralized Prompts**: All system prompts are defined in `prompts/tool_prompts.py`
+- **Tool Integration**: Each tool inherits from `BaseTool` and implements `get_system_prompt()`
+- **Prompt Flow**: `User Request → Tool Selection → System Prompt + Context → Gemini Response`
+
+### Specialized Expertise
+Each tool has a unique system prompt that defines its role and approach:
+- **`think_deeper`**: Acts as a senior development partner, challenging assumptions and finding edge cases
+- **`review_code`**: Expert code reviewer with security/performance focus, uses severity levels
+- **`debug_issue`**: Systematic debugger providing root cause analysis and prevention strategies
+- **`analyze`**: Code analyst focusing on architecture, patterns, and actionable insights
+
+### Customization
+To modify tool behavior, you can:
+1. Edit prompts in `prompts/tool_prompts.py` for global changes
+2. Override `get_system_prompt()` in a tool class for tool-specific changes
+3. Use the `temperature` parameter to adjust response style (0.2 for focused, 0.7 for creative)
+
 ## Contributing
 
 We welcome contributions! The modular architecture makes it easy to add new tools:
 
 1. Create a new tool in `tools/`
 2. Inherit from `BaseTool`
-3. Implement required methods
-4. Add to `TOOLS` in `server.py`
+3. Implement required methods (including `get_system_prompt()`)
+4. Add your system prompt to `prompts/tool_prompts.py`
+5. Register your tool in `TOOLS` dict in `server.py`
 
 See existing tools for examples.
 
