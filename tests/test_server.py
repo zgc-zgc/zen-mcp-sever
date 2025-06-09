@@ -92,6 +92,6 @@ class TestServerTools:
         assert len(result) == 1
 
         response = result[0].text
-        assert "Gemini MCP Server v2.4.0" in response
+        assert "Gemini MCP Server v2.4.1" in response
         assert "Available Tools:" in response
         assert "think_deeper" in response
