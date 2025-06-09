@@ -289,7 +289,7 @@ All tools that work with files support **both individual files and entire direct
 **`debug_issue`** - Debug with file context
 - `error_description`: Description of the issue (required)
 - `error_context`: Stack trace or logs
-- `relevant_files`: Files or directories related to the issue
+- `files`: Files or directories related to the issue
 - `runtime_info`: Environment details
 - `previous_attempts`: What you've tried
 
@@ -301,7 +301,7 @@ All tools that work with files support **both individual files and entire direct
 - `current_analysis`: Your current thinking (required)
 - `problem_context`: Additional context
 - `focus_areas`: Specific aspects to focus on
-- `reference_files`: Files or directories for context
+- `files`: Files or directories for context
 
 ```
 "Use gemini to think deeper about my design with reference to the src/models/ directory"

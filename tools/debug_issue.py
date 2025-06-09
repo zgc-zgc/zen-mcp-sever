@@ -22,7 +22,7 @@ class DebugIssueRequest(ToolRequest):
     error_context: Optional[str] = Field(
         None, description="Stack trace, logs, or additional error context"
     )
-    relevant_files: Optional[List[str]] = Field(
+    files: Optional[List[str]] = Field(
         None, description="Files or directories that might be related to the issue"
     )
     runtime_info: Optional[str] = Field(
@@ -60,10 +60,10 @@ class DebugIssueTool(BaseTool):
                     "type": "string",
                     "description": "Stack trace, logs, or additional error context",
                 },
-                "relevant_files": {
+                "files": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Files that might be related to the issue",
+                    "description": "Files or directories that might be related to the issue",
                 },
                 "runtime_info": {
                     "type": "string",
@@ -115,8 +115,8 @@ class DebugIssueTool(BaseTool):
             )
 
         # Add relevant files if provided
-        if request.relevant_files:
-            file_content, _ = read_files(request.relevant_files)
+        if request.files:
+            file_content, _ = read_files(request.files)
             context_parts.append(
                 f"\n=== RELEVANT CODE ===\n{file_content}\n=== END CODE ==="
             )

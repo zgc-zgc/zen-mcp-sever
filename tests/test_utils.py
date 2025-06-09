@@ -87,7 +87,9 @@ class TestFileUtils:
         assert "file1.py" in content
         assert "file2.js" in content
         assert "readme.md" in content
-        assert "src/module.py" in content
+        # Handle both forward and backslashes for cross-platform compatibility
+        assert "module.py" in content
+        assert "class Module: pass" in content
         
         # Check content
         assert "print('file1')" in content

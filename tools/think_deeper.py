@@ -26,7 +26,7 @@ class ThinkDeeperRequest(ToolRequest):
         None,
         description="Specific aspects to focus on (architecture, performance, security, etc.)",
     )
-    reference_files: Optional[List[str]] = Field(
+    files: Optional[List[str]] = Field(
         None, description="Optional file paths or directories for additional context"
     )
 
@@ -63,10 +63,10 @@ class ThinkDeeperTool(BaseTool):
                     "items": {"type": "string"},
                     "description": "Specific aspects to focus on (architecture, performance, security, etc.)",
                 },
-                "reference_files": {
+                "files": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Optional file paths for additional context",
+                    "description": "Optional file paths or directories for additional context",
                 },
                 "temperature": {
                     "type": "number",
@@ -105,8 +105,8 @@ class ThinkDeeperTool(BaseTool):
             )
 
         # Add reference files if provided
-        if request.reference_files:
-            file_content, _ = read_files(request.reference_files)
+        if request.files:
+            file_content, _ = read_files(request.files)
             context_parts.append(
                 f"\n=== REFERENCE FILES ===\n{file_content}\n=== END FILES ==="
             )
