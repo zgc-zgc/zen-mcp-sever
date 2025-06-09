@@ -146,17 +146,21 @@ async def handle_call_tool(
 async def handle_chat(arguments: Dict[str, Any]) -> List[TextContent]:
     """Handle general chat requests"""
     from config import TEMPERATURE_BALANCED
+    from prompts import CHAT_PROMPT
     from utils import read_files
 
     prompt = arguments.get("prompt", "")
     context_files = arguments.get("context_files", [])
     temperature = arguments.get("temperature", TEMPERATURE_BALANCED)
 
-    # Build context if files provided
-    full_prompt = prompt
+    # Build the full prompt with system context
+    user_content = prompt
     if context_files:
         file_content, _ = read_files(context_files)
-        full_prompt = f"{prompt}\n\n=== CONTEXT FILES ===\n{file_content}\n=== END CONTEXT ==="
+        user_content = f"{prompt}\n\n=== CONTEXT FILES ===\n{file_content}\n=== END CONTEXT ==="
+    
+    # Combine system prompt with user content
+    full_prompt = f"{CHAT_PROMPT}\n\n=== USER REQUEST ===\n{user_content}\n=== END REQUEST ===\n\nPlease provide a thoughtful, comprehensive response:"
 
     try:
         model = genai.GenerativeModel(
