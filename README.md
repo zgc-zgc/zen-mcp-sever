@@ -109,7 +109,7 @@ Just ask Claude naturally:
 - **Code needs review?** → `review_code` (bugs, security, performance issues)
 - **Something's broken?** → `debug_issue` (root cause analysis, error tracing)
 - **Want to understand code?** → `analyze` (architecture, patterns, dependencies)
-- **General questions?** → `chat` (explanations, comparisons, advice)
+- **Need a thinking partner?** → `chat` (brainstorm ideas, get second opinions, validate approaches)
 - **Check models?** → `list_models` (see available Gemini models)
 - **Server info?** → `get_version` (version and configuration details)
 
@@ -118,7 +118,7 @@ Just ask Claude naturally:
 2. [`review_code`](#2-review_code---professional-code-review) - Professional code review with severity levels
 3. [`debug_issue`](#3-debug_issue---expert-debugging-assistant) - Root cause analysis and debugging
 4. [`analyze`](#4-analyze---smart-file-analysis) - General-purpose file and code analysis
-5. [`chat`](#5-chat---general-development-chat) - General development conversations
+5. [`chat`](#5-chat---general-development-chat--collaborative-thinking) - Collaborative thinking and development conversations
 6. [`list_models`](#6-list_models---see-available-gemini-models) - List available Gemini models
 7. [`get_version`](#7-get_version---server-information) - Get server version and configuration
 
@@ -227,8 +227,8 @@ Just ask Claude naturally:
 
 **Triggers:** analyze, examine, look at, understand, inspect
 
-### 5. `chat` - General Development Chat
-**For everything else - explanations, comparisons, brainstorming**
+### 5. `chat` - General Development Chat & Collaborative Thinking
+**Your thinking partner - bounce ideas, get second opinions, brainstorm collaboratively**
 
 #### Example Prompts:
 
@@ -236,6 +236,8 @@ Just ask Claude naturally:
 ```
 "Use gemini to explain how async/await works in Python"
 "Get gemini to compare Redis vs Memcached for session storage"
+"Share my authentication design with gemini and get their opinion"
+"Brainstorm with gemini about scaling strategies for our API"
 ```
 
 **Collaborative Workflow:**
@@ -246,12 +248,16 @@ Just ask Claude naturally:
 ```
 
 **Key Features:**
+- Collaborative thinking partner for your analysis and planning
+- Get second opinions on your designs and approaches
+- Brainstorm solutions and explore alternatives together
+- Validate your checklists and implementation plans
 - General development questions and explanations
 - Technology comparisons and best practices
 - Architecture and design discussions
 - Can reference files for context: `"Use gemini to explain this algorithm with context from algorithm.py"`
 
-**Triggers:** ask, explain, compare, suggest, what about
+**Triggers:** ask, explain, compare, suggest, what about, brainstorm, discuss, share my thinking, get opinion
 
 ### 6. `list_models` - See Available Gemini Models
 ```

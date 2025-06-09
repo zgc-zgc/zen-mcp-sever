@@ -67,16 +67,19 @@ async def handle_list_tools() -> List[Tool]:
             Tool(
                 name="chat",
                 description=(
-                    "GENERAL CHAT - Have a conversation with Gemini about any development topic. "
-                    "Use for explanations, brainstorming, or general questions. "
-                    "Triggers: 'ask gemini', 'explain', 'what is', 'how do I'."
+                    "GENERAL CHAT & COLLABORATIVE THINKING - Use Gemini as your thinking partner! "
+                    "Perfect for: bouncing ideas during your own analysis, getting second opinions on your plans, "
+                    "collaborative brainstorming, validating your checklists and approaches, exploring alternatives. "
+                    "Also great for: explanations, comparisons, general development questions. "
+                    "Triggers: 'ask gemini', 'brainstorm with gemini', 'get gemini's opinion', 'discuss with gemini', "
+                    "'share my thinking with gemini', 'explain', 'what is', 'how do I'."
                 ),
                 inputSchema={
                     "type": "object",
                     "properties": {
                         "prompt": {
                             "type": "string",
-                            "description": "Your question or topic",
+                            "description": "Your question, topic, or current thinking to discuss with Gemini",
                         },
                         "context_files": {
                             "type": "array",

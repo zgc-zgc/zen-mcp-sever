@@ -10,37 +10,65 @@ When you configure an MCP server in Claude Desktop, Claude automatically discove
 
 ## How This Gemini Server Appears in Claude
 
-Once configured, this Gemini MCP server provides three tools that Claude can use:
+Once configured, this Gemini MCP server provides these powerful tools:
 
-### 1. `gemini_chat`
-- Claude sees this as a way to chat with Gemini
-- You can invoke it naturally: "Ask Gemini about...", "Use Gemini to..."
+### 1. `chat` - Collaborative Thinking Partner
+- Claude sees this as a way to collaborate with Gemini on thinking and problem-solving
+- Perfect for: brainstorming, getting second opinions, validating approaches
+- Triggered by: "Brainstorm with Gemini", "Share my thinking with Gemini", "Get Gemini's opinion"
 
-### 2. `gemini_analyze_code`
-- Claude recognizes this for code analysis tasks
-- Triggered by: "Use Gemini to analyze this file", "Have Gemini review this code"
+### 2. `think_deeper` - Extended Reasoning
+- Challenges assumptions and explores alternatives
+- Triggered by: "Use Gemini to think deeper", "Extend my analysis with Gemini"
 
-### 3. `gemini_list_models`
-- Lists available models
-- Usually called automatically when needed
+### 3. `analyze` - Code & File Analysis
+- Analyzes files and directories for patterns, architecture, and insights
+- Triggered by: "Use Gemini to analyze", "Get Gemini to examine this code"
+
+### 4. `review_code` - Professional Code Review
+- Provides prioritized feedback on code quality and issues
+- Triggered by: "Use Gemini to review", "Get Gemini to check for bugs"
+
+### 5. `debug_issue` - Expert Debugging
+- Root cause analysis for complex problems
+- Triggered by: "Use Gemini to debug", "Get Gemini to trace this error"
+
+### 6. `list_models` & `get_version`
+- Utility tools for configuration and model info
 
 ## Natural Language Usage
 
 Claude is smart about understanding your intent. You don't need special syntax:
 
 ### Examples that work:
-- "Ask Gemini what it thinks about quantum computing"
-- "Use Gemini to analyze the file /path/to/large/file.py"
+
+**Collaborative Thinking:**
+- "Share my authentication design with Gemini and get their opinion"
+- "Brainstorm with Gemini about scaling strategies"
+- "I'm thinking of using microservices - discuss this with Gemini"
+- "Get Gemini's perspective on my implementation plan"
+
+**Deep Analysis:**
+- "Use Gemini to think deeper about edge cases in my design"
+- "Get Gemini to analyze the entire src/ directory architecture"
 - "Have Gemini review this code for security issues"
-- "Get Gemini's opinion on this architecture"
-- "Pass this to Gemini for extended analysis"
+- "Use Gemini to debug why this test is failing"
+
+**General Development:**
+- "Ask Gemini to explain async/await in Python"
+- "Get Gemini to compare Redis vs Memcached"
+- "Use Gemini to suggest optimization strategies"
 
 ### What happens behind the scenes:
-1. Claude recognizes keywords like "Gemini", "analyze", "review"
-2. Claude determines which tool to use based on context
-3. Claude extracts parameters (files, questions, etc.) from your request
-4. Claude calls the appropriate MCP tool
-5. Claude presents the response back to you
+1. Claude recognizes keywords like "Gemini", "brainstorm", "discuss", "opinion", "analyze", "review", "debug"
+2. Claude determines which tool to use based on context:
+   - Collaborative thinking → `chat`
+   - Deep analysis → `think_deeper`
+   - Code examination → `analyze` or `review_code`
+   - Problem solving → `debug_issue`
+3. Claude extracts parameters (files, questions, context) from your request
+4. Claude calls the appropriate MCP tool with your context
+5. Claude integrates Gemini's response into the conversation
 
 ## Configuration in Claude Desktop
 
@@ -75,7 +103,11 @@ Add to `%APPDATA%\Claude\claude_desktop_config.json`
 To verify the server is connected:
 1. Look for the MCP icon in Claude's interface
 2. Ask Claude: "What MCP tools are available?"
-3. Claude should list the Gemini tools
+3. Claude should list the Gemini tools including:
+   - `chat` for collaborative thinking
+   - `think_deeper` for extended analysis
+   - `analyze`, `review_code`, `debug_issue` for development tasks
+4. Try: "Brainstorm with Gemini about improving code performance"
 
 ## Troubleshooting
 
@@ -88,6 +120,10 @@ If Claude doesn't recognize Gemini commands:
 ## Integration with Claude Code
 
 In Claude Code, the integration is even more seamless:
+- Claude can use Gemini as a thinking partner during complex tasks
+- Share your implementation plans with Gemini for validation
+- Get second opinions on architectural decisions
+- Collaborate on debugging tricky issues
 - Large file handling is automatic
 - Claude will suggest using Gemini when hitting token limits
 - File paths are resolved relative to your workspace
