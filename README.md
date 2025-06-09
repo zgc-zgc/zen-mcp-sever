@@ -19,18 +19,36 @@ This server makes Gemini your development sidekick, handling what Claude can't o
 ### 1. Get a Gemini API Key
 Visit [Google AI Studio](https://makersuite.google.com/app/apikey) and generate an API key. For best results with Gemini 2.5 Pro, use a paid API key as the free tier has limited access to the latest models.
 
-### 2. Install via Claude Desktop Config
+### 2. Clone the Repository
+Clone this repository to a location on your computer:
 
-Add to your `claude_desktop_config.json`:
+```bash
+# Example: Clone to your home directory
+cd ~
+git clone https://github.com/BeehiveInnovations/gemini-mcp-server.git
 
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+# The server is now at: ~/gemini-mcp-server
+```
 
+**Note the full path** - you'll need it in the next step:
+- **macOS/Linux**: `/Users/YOUR_USERNAME/gemini-mcp-server`
+- **Windows**: `C:\Users\YOUR_USERNAME\gemini-mcp-server`
+
+### 3. Configure Claude Desktop
+Add the server to your `claude_desktop_config.json`:
+
+**Find your config file:**
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+**Add this configuration** (replace with YOUR actual paths):
+
+**macOS/Linux:**
 ```json
 {
   "mcpServers": {
     "gemini": {
-      "command": "/absolute/path/to/gemini-mcp-server/run_gemini.sh",
+      "command": "/Users/YOUR_USERNAME/gemini-mcp-server/run_gemini.sh",
       "env": {
         "GEMINI_API_KEY": "your-gemini-api-key-here"
       }
@@ -39,18 +57,36 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-**Windows users**: Use `run_gemini.bat` instead of `run_gemini.sh`
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "gemini": {
+      "command": "C:\\Users\\YOUR_USERNAME\\gemini-mcp-server\\run_gemini.bat",
+      "env": {
+        "GEMINI_API_KEY": "your-gemini-api-key-here"
+      }
+    }
+  }
+}
+```
 
-### 3. Restart Claude Desktop
+**Important**: 
+- Replace `YOUR_USERNAME` with your actual username
+- Use the full absolute path where you cloned the repository
+- Windows users: Note the double backslashes `\\` in the path
 
-### 4. Connect to Claude Code
+### 4. Restart Claude Desktop
+Completely quit and restart Claude Desktop for the changes to take effect.
+
+### 5. Connect to Claude Code
 
 To use the server in Claude Code, run:
 ```bash
 claude mcp add-from-claude-desktop -s user
 ```
 
-### 5. Start Using It!
+### 6. Start Using It!
 
 Just ask Claude naturally:
 - "Use gemini to think deeper about this architecture design"
