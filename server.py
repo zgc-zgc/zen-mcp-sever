@@ -808,6 +808,33 @@ async def handle_call_tool(name: str, arguments: dict[str, Any]) -> list[TextCon
         result = await tool.execute(arguments)
         logger.info(f"Tool '{name}' execution completed")
 
+        # After execution, add the assistant's response to the conversation thread
+        if "continuation_id" in arguments and arguments["continuation_id"]:
+            try:
+                from utils.conversation_memory import add_turn
+                import json
+
+                if result and isinstance(result, list) and result and isinstance(result[0], TextContent):
+                    response_text = result[0].text
+                    
+                    try:
+                        parsed_output = json.loads(response_text)
+                        if isinstance(parsed_output, dict) and 'content' in parsed_output:
+                            response_text = parsed_output['content']
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+
+                    add_turn(
+                        thread_id=arguments["continuation_id"],
+                        role="assistant",
+                        content=response_text,
+                        tool_name=name,
+                        model_name=arguments.get("_resolved_model_name"),
+                    )
+                    logger.debug(f"Added assistant turn to thread {arguments['continuation_id']}")
+            except Exception as e:
+                logger.error(f"Failed to add assistant turn to conversation: {e}")
+
         # Log completion to activity file
         try:
             mcp_activity_logger = logging.getLogger("mcp_activity")

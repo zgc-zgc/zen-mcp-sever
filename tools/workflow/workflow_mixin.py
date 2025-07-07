@@ -669,11 +669,30 @@ class BaseWorkflowMixin(ABC):
 
             # Handle continuation
             continuation_id = request.continuation_id
+            force_new = getattr(request, 'new_conversation', False)
 
             # Create thread for first step
-            if not continuation_id and request.step_number == 1:
-                clean_args = {k: v for k, v in arguments.items() if k not in ["_model_context", "_resolved_model_name"]}
-                continuation_id = create_thread(self.get_name(), clean_args)
+            if (not continuation_id and request.step_number == 1) or (force_new and request.step_number == 1):
+                if force_new:
+                    continuation_id = None  # Ensure new thread even if continuation_id was provided
+                elif not continuation_id:
+                    # Try to use default conversation ID
+                    try:
+                        from utils.storage_backend import get_storage_backend
+                        storage = get_storage_backend()
+                        default_id = storage.get_default_conversation_id()
+                        if default_id:
+                            logger.debug(f"Workflow using default conversation ID: {default_id}")
+                            continuation_id = default_id
+                    except Exception:
+                        pass  # Fall back to creating new thread
+                
+                if not continuation_id or force_new:
+                    clean_args = {k: v for k, v in arguments.items() if k not in ["_model_context", "_resolved_model_name"]}
+                    continuation_id = create_thread(self.get_name(), clean_args)
+                    if force_new:
+                        logger.debug(f"Workflow created new conversation thread: {continuation_id}")
+                    
                 self.initial_request = request.step
                 # Allow tools to store initial description for expert analysis
                 self.store_initial_issue(request.step)

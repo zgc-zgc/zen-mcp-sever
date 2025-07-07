@@ -41,6 +41,11 @@ class SchemaBuilder:
             "type": "string",
             "description": COMMON_FIELD_DESCRIPTIONS["continuation_id"],
         },
+        "new_conversation": {
+            "type": "boolean",
+            "description": COMMON_FIELD_DESCRIPTIONS["new_conversation"],
+            "default": False,
+        },
         "images": {
             "type": "array",
             "items": {"type": "string"},

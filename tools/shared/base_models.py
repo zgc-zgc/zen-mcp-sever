@@ -46,6 +46,11 @@ COMMON_FIELD_DESCRIPTIONS = {
         "without repeating previous analysis or instructions. Focus on providing only new insights, "
         "additional findings, or answers to follow-up questions. Can be used across different tools."
     ),
+    "new_conversation": (
+        "Force creation of a new conversation thread, ignoring any existing continuation_id. "
+        "Set to true only when you explicitly want to start a fresh conversation. "
+        "Default behavior is to continue the most recent conversation."
+    ),
     "images": (
         "Optional image(s) for visual context. Accepts absolute file paths or "
         "base64 data URLs. Only provide when user explicitly mentions images. "
@@ -101,6 +106,7 @@ class ToolRequest(BaseModel):
 
     # Conversation support
     continuation_id: Optional[str] = Field(None, description=COMMON_FIELD_DESCRIPTIONS["continuation_id"])
+    new_conversation: Optional[bool] = Field(False, description=COMMON_FIELD_DESCRIPTIONS["new_conversation"])
 
     # Visual context
     images: Optional[list[str]] = Field(None, description=COMMON_FIELD_DESCRIPTIONS["images"])

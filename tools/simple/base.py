@@ -187,6 +187,13 @@ class SimpleTool(BaseTool):
         except AttributeError:
             return None
 
+    def get_request_new_conversation(self, request) -> bool:
+        """Get new_conversation flag from request."""
+        try:
+            return bool(request.new_conversation)
+        except AttributeError:
+            return False
+
     def get_request_prompt(self, request) -> str:
         """Get prompt from request. Override for custom prompt handling."""
         try:
@@ -568,11 +575,25 @@ class SimpleTool(BaseTool):
             )
 
     def _create_continuation_offer(self, request, model_info: Optional[dict] = None):
-        """Create continuation offer following old base.py pattern"""
+        """Create continuation offer with improved conversation management"""
         continuation_id = self.get_request_continuation_id(request)
+        force_new = self.get_request_new_conversation(request)
 
         try:
             from utils.conversation_memory import create_thread, get_thread
+
+            # If explicitly requested new conversation, ignore existing continuation_id
+            if force_new:
+                logger.debug("Force new conversation requested, creating new thread")
+                continuation_id = None
+            elif not continuation_id:
+                # No continuation_id provided and not forcing new - try to use default
+                from utils.storage_backend import get_storage_backend
+                storage = get_storage_backend()
+                default_id = storage.get_default_conversation_id()
+                if default_id:
+                    logger.debug(f"Using default conversation ID: {default_id}")
+                    continuation_id = default_id
 
             if continuation_id:
                 # Existing conversation
@@ -590,30 +611,31 @@ class SimpleTool(BaseTool):
                         "remaining_turns": remaining_turns,
                         "note": f"Claude can continue this conversation for {remaining_turns} more exchanges.",
                     }
-            else:
-                # New conversation - create thread and offer continuation
-                # Convert request to dict for initial_context
-                initial_request_dict = self.get_request_as_dict(request)
+            
+            # Create new conversation thread
+            # Convert request to dict for initial_context
+            initial_request_dict = self.get_request_as_dict(request)
 
-                new_thread_id = create_thread(tool_name=self.get_name(), initial_request=initial_request_dict)
+            new_thread_id = create_thread(tool_name=self.get_name(), initial_request=initial_request_dict)
 
-                # Add the initial user turn to the new thread
-                from utils.conversation_memory import MAX_CONVERSATION_TURNS, add_turn
+            # Add the initial user turn to the new thread
+            from utils.conversation_memory import MAX_CONVERSATION_TURNS, add_turn
 
-                user_prompt = self.get_request_prompt(request)
-                user_files = self.get_request_files(request)
-                user_images = self.get_request_images(request)
+            user_prompt = self.get_request_prompt(request)
+            user_files = self.get_request_files(request)
+            user_images = self.get_request_images(request)
 
-                # Add user's initial turn
-                add_turn(
-                    new_thread_id, "user", user_prompt, files=user_files, images=user_images, tool_name=self.get_name()
-                )
+            # Add user's initial turn
+            add_turn(
+                new_thread_id, "user", user_prompt, files=user_files, images=user_images, tool_name=self.get_name()
+            )
 
-                return {
-                    "continuation_id": new_thread_id,
-                    "remaining_turns": MAX_CONVERSATION_TURNS - 1,
-                    "note": f"Claude can continue this conversation for {MAX_CONVERSATION_TURNS - 1} more exchanges.",
-                }
+            note_prefix = "New conversation started. " if force_new else ""
+            return {
+                "continuation_id": new_thread_id,
+                "remaining_turns": MAX_CONVERSATION_TURNS - 1,
+                "note": f"{note_prefix}Claude can continue this conversation for {MAX_CONVERSATION_TURNS - 1} more exchanges.",
+            }
         except Exception:
             return None
 
