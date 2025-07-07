@@ -347,21 +347,27 @@ class SimpleTool(BaseTool):
                     prompt = field_value
                     logger.debug(f"{self.get_name()}: Using pre-embedded conversation history")
                     
-                    # Extract only the NEW user input from the embedded prompt
+                    # Extract and record only the NEW user input from embedded prompt
+                    # Don't record the full prompt which contains duplicated history
                     if "=== NEW USER INPUT ===" in field_value:
                         parts = field_value.split("=== NEW USER INPUT ===")
                         if len(parts) > 1:
                             actual_new_input = parts[-1].strip()
+                            # Remove any continuation instructions at the end
+                            if "CONVERSATION CONTINUATION:" in actual_new_input:
+                                actual_new_input = actual_new_input.split("CONVERSATION CONTINUATION:")[0].strip()
+                            
                             user_files = self.get_request_files(request)
                             
-                            # Record only the actual new input, not the full prompt with history
+                            # Record only the clean new input
                             from utils.conversation_memory import add_turn
                             if actual_new_input:
                                 add_turn(continuation_id, "user", actual_new_input, files=user_files)
-                                logger.debug(f"{self.get_name()}: Added extracted new user input to conversation")
+                                logger.debug(f"{self.get_name()}: Added clean new user input to conversation")
                 else:
-                    # No embedded history - reconstruct it (for in-process calls)
-                    logger.debug(f"{self.get_name()}: No embedded history found, reconstructing conversation")
+                    # No embedded history - this means it's the first turn or in-process call
+                    # Only record if it's truly new content
+                    logger.debug(f"{self.get_name()}: No embedded history found, treating as new conversation")
 
                     # Get thread context
                     from utils.conversation_memory import add_turn, build_conversation_history, get_thread
@@ -371,9 +377,10 @@ class SimpleTool(BaseTool):
                         user_prompt = self.get_request_prompt(request)
                         user_files = self.get_request_files(request)
                         
-                        if user_prompt:
+                        # Only add if this is the very first turn (no existing turns)
+                        if user_prompt and len(thread_context.turns) == 0:
                             add_turn(continuation_id, "user", user_prompt, files=user_files)
-                            logger.debug(f"{self.get_name()}: Added new user turn to conversation")
+                            logger.debug(f"{self.get_name()}: Added initial user turn to conversation")
 
                         # Get conversation history
                         conversation_history, conversation_tokens = build_conversation_history(
