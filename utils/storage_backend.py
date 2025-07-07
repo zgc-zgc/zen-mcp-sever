@@ -44,18 +44,22 @@ class FileBasedStorage:
         try:
             context = json.loads(data)
             md = f"---\n"
-            # Use a simple JSON dump for all metadata to ensure reversibility
-            md += f"metadata: {json.dumps(context)}\n"
+            # Simple metadata with only essential info
+            simplified_metadata = {
+                'thread_id': context.get('thread_id'),
+                'created_at': context.get('created_at'),
+                'tool_name': context.get('tool_name')
+            }
+            md += f"metadata: {json.dumps(simplified_metadata)}\n"
             md += f"---\n\n"
             md += f"# Conversation: {context.get('thread_id', '')}\n\n"
 
+            # Record all turns - no need for complex deduplication
             for i, turn in enumerate(context.get('turns', [])):
                 md += f"## Turn {i+1}: {turn.get('role', 'unknown')}\n"
                 md += f"**Tool:** {turn.get('tool_name', 'N/A')}\n"
                 if turn.get('model_name'):
                     md += f"**Model:** {turn.get('model_name')}\n"
-                if turn.get('files'):
-                    md += f"**Files:** {', '.join(turn.get('files'))}\n"
                 md += f"\n```\n{turn.get('content', '')}\n```\n\n"
             return md
         except Exception as e:
@@ -70,7 +74,20 @@ class FileBasedStorage:
                 json_str = match.group(1)
                 # Basic validation to see if it looks like a JSON object
                 if json_str.strip().startswith('{') and json_str.strip().endswith('}'):
-                    return json_str
+                    # Parse the simplified metadata and reconstruct full context if needed
+                    simplified_metadata = json.loads(json_str)
+                    
+                    # Build minimal context structure for compatibility
+                    full_context = {
+                        'thread_id': simplified_metadata.get('thread_id', ''),
+                        'created_at': simplified_metadata.get('created_at', ''),
+                        'last_updated_at': simplified_metadata.get('created_at', ''),
+                        'tool_name': simplified_metadata.get('tool_name', ''),
+                        'turns': [],  # Empty turns for file-based storage
+                        'initial_context': {}
+                    }
+                    
+                    return json.dumps(full_context)
             logger.warning("Could not parse metadata from markdown file.")
         except Exception as e:
             logger.error(f"Error parsing markdown file: {e}")

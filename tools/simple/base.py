@@ -346,6 +346,19 @@ class SimpleTool(BaseTool):
                     # Use pre-embedded history
                     prompt = field_value
                     logger.debug(f"{self.get_name()}: Using pre-embedded conversation history")
+                    
+                    # Extract only the NEW user input from the embedded prompt
+                    if "=== NEW USER INPUT ===" in field_value:
+                        parts = field_value.split("=== NEW USER INPUT ===")
+                        if len(parts) > 1:
+                            actual_new_input = parts[-1].strip()
+                            user_files = self.get_request_files(request)
+                            
+                            # Record only the actual new input, not the full prompt with history
+                            from utils.conversation_memory import add_turn
+                            if actual_new_input:
+                                add_turn(continuation_id, "user", actual_new_input, files=user_files)
+                                logger.debug(f"{self.get_name()}: Added extracted new user input to conversation")
                 else:
                     # No embedded history - reconstruct it (for in-process calls)
                     logger.debug(f"{self.get_name()}: No embedded history found, reconstructing conversation")
@@ -354,21 +367,15 @@ class SimpleTool(BaseTool):
                     from utils.conversation_memory import add_turn, build_conversation_history, get_thread
 
                     thread_context = get_thread(continuation_id)
-
                     if thread_context:
-                        # Add user's new input to conversation
                         user_prompt = self.get_request_prompt(request)
                         user_files = self.get_request_files(request)
+                        
                         if user_prompt:
                             add_turn(continuation_id, "user", user_prompt, files=user_files)
+                            logger.debug(f"{self.get_name()}: Added new user turn to conversation")
 
-                            # Get updated thread context after adding the turn
-                            thread_context = get_thread(continuation_id)
-                            logger.debug(
-                                f"{self.get_name()}: Retrieved updated thread with {len(thread_context.turns)} turns"
-                            )
-
-                        # Build conversation history with updated thread context
+                        # Get conversation history
                         conversation_history, conversation_tokens = build_conversation_history(
                             thread_context, self._model_context
                         )
@@ -530,8 +537,10 @@ class SimpleTool(BaseTool):
                 if model_response:
                     model_metadata = {"usage": model_response.usage, "metadata": model_response.metadata}
 
-            # Only add the assistant's response to the conversation
-            # The user's turn is handled elsewhere (when thread is created/continued)
+            # Add the assistant's response to conversation memory
+            # AI responses are always new, no need to check for duplicates
+            from utils.conversation_memory import add_turn
+            
             add_turn(
                 continuation_id,  # thread_id as positional argument
                 "assistant",  # role as positional argument
@@ -543,6 +552,7 @@ class SimpleTool(BaseTool):
                 model_name=model_name,
                 model_metadata=model_metadata,
             )
+            logger.debug(f"{self.get_name()}: Added assistant response to conversation")
 
         # Create continuation offer like old base.py
         continuation_data = self._create_continuation_offer(request, model_info)
